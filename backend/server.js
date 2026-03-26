@@ -1,50 +1,36 @@
-require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
-const connectDB = require("./config/db");
-const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+require("dotenv").config();
 
-// Route Imports
-const adminAuthRoutes = require("./routes/adminAuthRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
-const verificationRoutes = require("./routes/verificationRoutes");
-const userRoutes = require("./routes/userRoutes");
-const productRoutes = require("./routes/productRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const complaintRoutes = require("./routes/complaintRoutes");
-const categoryRoutes = require("./routes/categoryRoutes");
-const analyticsRoutes = require("./routes/analyticsRoutes");
-
-// Connect to Database
-connectDB();
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true,
+}));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Routes
+app.use("/api/auth", authRoutes);
+
+// Health check
 app.get("/", (req, res) => {
-  res.send("MarketLink Admin API is running 🚀");
+  res.send("MarketLink Backend is running 🚀");
 });
 
-app.use("/api/admin/auth", adminAuthRoutes);
-app.use("/api/admin/dashboard", dashboardRoutes);
-app.use("/api/admin/verifications", verificationRoutes);
-app.use("/api/admin/users", userRoutes);
-app.use("/api/admin/products", productRoutes);
-app.use("/api/admin/orders", orderRoutes);
-app.use("/api/admin/complaints", complaintRoutes);
-app.use("/api/admin/categories", categoryRoutes);
-app.use("/api/admin/analytics", analyticsRoutes);
-
-// Error Handling Middleware
-app.use(notFound);
-app.use(errorHandler);
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected ✅"))
+  .catch((err) => console.log("MongoDB Connection Error:", err));
 
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-});
+  console.log(`Server running on port ${PORT}`);
+});
