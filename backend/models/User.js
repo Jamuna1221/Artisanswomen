@@ -1,26 +1,63 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    // --- Identity ---
+    name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ["buyer", "artisan", "admin"], default: "buyer" },
-    status: { type: String, enum: ["active", "blocked", "inactive"], default: "active" },
+    password: { type: String }, // set during registration
+    age: { type: Number },
+    gender: { type: String, enum: ["Women", "Transwomen"] },
+    aadhaarNumber: { type: String },
     phone: { type: String },
-    avatar: { type: String },
+
+    // --- Craft ---
+    craftType: [{ type: String }], // e.g. ["Pottery", "Weaving", "Other: Macramé"]
+    experience: { type: String },
+    bio: { type: String },
+
+    // --- Location ---
+    city: { type: String },
+    district: { type: String },
+    state: { type: String },
+
+    // --- Social ---
+    socialLinks: {
+      whatsapp: { type: String },
+      instagram: { type: String },
+    },
+
+    // --- Files stored as Buffer in MongoDB ---
+    profileImage: {
+      data: { type: Buffer },
+      contentType: { type: String },
+    },
+    artisanCardFile: {
+      data: { type: Buffer },
+      contentType: { type: String },
+      hasPehchanCard: { type: Boolean, default: false },
+    },
+    idProofFile: {
+      data: { type: Buffer },
+      contentType: { type: String },
+      idProofType: { type: String }, // e.g. "Aadhaar", "PAN", "Passport", etc.
+    },
+
+    // --- Verification ---
+    isVerified: { type: Boolean, default: false },
+    verificationStatus: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected"],
+      default: "Pending",
+    },
+    rejectionReason: { type: String },
+
+    // --- OTP (for signup only) ---
+    otp: { type: String },
+    otpExpiry: { type: Date },
+    isOtpVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
-
-userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
-  this.password = await bcrypt.hash(this.password, 10);
-});
-
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
 
 module.exports = mongoose.model("User", userSchema);
