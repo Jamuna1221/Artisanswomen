@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../../api/axios';
+import api from '../services/axios';
 import './seller.css';
 
 export default function SellerSignup() {
