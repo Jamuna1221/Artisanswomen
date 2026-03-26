@@ -4,13 +4,12 @@ import { AuthProvider } from './admin/context/AuthContext';
 import AppRoutes from './admin/routes/AppRoutes';
 import './admin/admin.css';
 
-// This App component will be the entry point for Admin (and potentially user side if merged)
+// This App component is the main entry point for both Admin and User-side (Home)
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
-        {/* User side routes could go here as well if merged */}
       </AuthProvider>
     </BrowserRouter>
   );

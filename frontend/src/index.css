@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+/* Handora Global Styles & Variables */
 
 :root {
-  /* Handora Color Palette */
+  /* Handora Premium Color Palette */
   --primary: #C05641;      /* Terracotta / Clay */
   --secondary: #E9C46A;    /* Muted Gold / Mustard */
   --accent: #2A9D8F;       /* Teal / Sage Green */
@@ -17,22 +17,25 @@
   background-color: var(--bg-warm);
 }
 
-body {
+* {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
-* {
-  box-sizing: border-box;
+html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, .brand-name {
   font-family: 'Playfair Display', serif;
 }
 
-/* Layout System */
+/* Admin Dashboard Layout System */
 .admin-container {
   display: flex;
   min-height: 100vh;
@@ -127,7 +130,7 @@ h1, h2, h3, h4, .brand-name {
   font-size: 0.9rem;
 }
 
-/* Animations */
+/* Global Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

@@ -1,0 +1,317 @@
+/* ===== ARTISAN STORY ===== */
+
+.artisan-story {
+  position: relative;
+  background: var(--cream);
+  overflow: hidden;
+}
+
+.as-texture {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 80% 20%, rgba(201,146,74,0.07) 0%, transparent 55%),
+    radial-gradient(circle at 10% 80%, rgba(124,58,45,0.06) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.as-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+  padding: var(--space-xl) 0;
+  position: relative;
+}
+
+/* Images */
+.as-images {
+  position: relative;
+  height: 620px;
+}
+
+.as-img-primary-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 75%;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(42,30,22,0.18);
+}
+
+.as-img-primary {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.as-img-primary-wrap:hover .as-img-primary {
+  transform: scale(1.04);
+}
+
+.as-img-caption {
+  background: var(--clay);
+  color: var(--gold-pale);
+  text-align: center;
+  padding: 0.6rem;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.as-img-secondary-wrap {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 55%;
+  border-radius: 6px;
+  overflow: visible;
+  box-shadow: 0 12px 40px rgba(42,30,22,0.15);
+}
+
+.as-img-secondary {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+.as-img-float-stat {
+  position: absolute;
+  top: -1.5rem;
+  left: -1.5rem;
+  background: var(--gold-pale);
+  border: 2px solid var(--gold-light);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  box-shadow: 0 8px 24px rgba(42,30,22,0.1);
+}
+
+.float-stat-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--clay);
+  line-height: 1;
+}
+
+.float-stat-label {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bark-light);
+  line-height: 1.4;
+}
+
+.as-decor {
+  position: absolute;
+  left: -2rem;
+  bottom: 3rem;
+  width: 100px;
+  height: 100px;
+  opacity: 0.7;
+  animation: kolam-spin 30s linear infinite;
+}
+
+/* Content */
+.as-title {
+  margin: 1rem 0 2rem;
+}
+
+.as-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.as-quote {
+  position: relative;
+  border-left: 3px solid var(--gold);
+  padding: 0.75rem 1.5rem;
+  margin-bottom: 1.75rem;
+  background: var(--gold-pale);
+  border-radius: 0 4px 4px 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--bark);
+  line-height: 1.65;
+}
+
+.as-quote-mark {
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--gold);
+  font-family: var(--font-display);
+  vertical-align: -0.35em;
+  margin-right: 0.2rem;
+}
+
+.as-bio {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--smoke);
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+/* Artisan Profile Card */
+.as-artisan-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--cream-dark);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.75rem 0;
+  border: 1px solid var(--parchment);
+}
+
+.as-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--gold-light);
+}
+
+.as-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.as-artisan-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--clay-dark);
+}
+
+.as-artisan-craft {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: var(--smoke);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.as-artisan-badges {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.as-badge {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--clay);
+  color: var(--gold-pale);
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+}
+
+.as-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.btn-ghost-dark {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--clay);
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--clay);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-ghost-dark:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* Impact Band */
+.as-band {
+  background: var(--clay-dark);
+  padding: 3rem 0;
+  position: relative;
+}
+
+.as-band::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--clay), var(--gold), var(--clay));
+}
+
+.as-band-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+
+.as-band-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.as-band-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.as-band-label {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,230,206,0.6);
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .as-inner {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    padding: var(--space-lg) 0;
+  }
+
+  .as-images {
+    height: 420px;
+  }
+
+  .as-img-primary-wrap { width: 70%; }
+  .as-img-primary { height: 350px; }
+  .as-img-secondary-wrap { width: 50%; }
+  .as-img-secondary { height: 220px; }
+
+  .as-band-inner { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+}
+
+@media (max-width: 640px) {
+  .as-images { display: none; }
+  .as-band-inner { grid-template-columns: repeat(2, 1fr); }
+}

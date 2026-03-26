@@ -11,6 +11,7 @@ import CategoriesPage from '../pages/categories/CategoriesPage';
 import NotificationsPage from '../pages/notifications/NotificationsPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import ProfilePage from '../pages/profile/ProfilePage';
+import Home from '../../pages/Home/Home';
 
 // Remaining Placeholders
 const BuyersPage = () => <div>Buyers Management Page</div>;
@@ -22,8 +23,13 @@ const NotFound = () => <div style={{padding: 50, textAlign: 'center'}}><h1>404</
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Home Landing Page */}
+      <Route path="/" element={<Home />} />
+
+      {/* Admin Auth */}
       <Route path="/admin/login" element={<AdminLogin />} />
       
+      {/* Admin Dashboard Protected Routes */}
       <Route path="/admin" element={
         <ProtectedRoute>
           <AdminLayout />
@@ -43,8 +49,6 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProfilePage />} />
       </Route>
 
-      {/* Redirect / to /admin */}
-      <Route path="/" element={<Navigate to="/admin" />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
