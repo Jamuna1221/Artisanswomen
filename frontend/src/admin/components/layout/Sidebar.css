@@ -1,5 +1,5 @@
 .sidebar-container {
-  width: 280px;
+  width: 280px; /* Reverted to "usual" breadth */
   height: 100vh;
   background: white;
   border-right: 1px solid var(--border-light);

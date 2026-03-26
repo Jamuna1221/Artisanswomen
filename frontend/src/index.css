@@ -46,7 +46,7 @@ h1, h2, h3, h4, .brand-name {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 280px; /* Width of Sidebar */
+  margin-left: 280px; /* Reverted to "usual" width of 280px */
   min-height: 100vh;
   transition: var(--transition-fast);
 }
