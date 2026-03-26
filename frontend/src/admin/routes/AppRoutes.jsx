@@ -13,14 +13,6 @@ import SettingsPage from '../pages/settings/SettingsPage';
 import ProfilePage from '../pages/profile/ProfilePage';
 import Home from '../../pages/Home/Home';
 
-// --- Seller Flow Imports ---
-import SellerSignup from '../../pages/Seller/SellerSignup';
-import SellerRegister from '../../pages/Seller/SellerRegister';
-import SellerLogin from '../../pages/Seller/SellerLogin';
-import ApprovalPending from '../../pages/Seller/ApprovalPending';
-import SellerDashboard from '../../pages/Seller/SellerDashboard';
-import SellerProtectedRoute from '../../components/ProtectedRoute';
-
 // Remaining Placeholders
 const BuyersPage = () => <div>Buyers Management Page</div>;
 const ComplaintsPage = () => <div>Complaints Page</div>;
@@ -33,13 +25,6 @@ const AppRoutes = () => {
     <Routes>
       {/* Home Landing Page */}
       <Route path="/" element={<Home />} />
-
-      {/* --- Seller Auth & Flow --- */}
-      <Route path="/seller/signup" element={<SellerSignup />} />
-      <Route path="/seller/login" element={<SellerLogin />} />
-      <Route path="/seller/register" element={<SellerRegister />} />
-      <Route path="/seller/pending" element={<SellerProtectedRoute><ApprovalPending /></SellerProtectedRoute>} />
-      <Route path="/seller/dashboard" element={<SellerProtectedRoute requireApproved><SellerDashboard /></SellerProtectedRoute>} />
 
       {/* Admin Auth */}
       <Route path="/admin/login" element={<AdminLogin />} />

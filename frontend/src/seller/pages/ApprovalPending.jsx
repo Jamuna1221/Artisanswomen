@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
-import { useAuth } from '../../context/AuthContext';
+import api from '../services/axios';
+import { useAuth } from '../context/AuthContext';
 import './seller.css';
 
 const statusConfig = {

@@ -4,8 +4,9 @@ import Home from './pages/Home/Home';
 import SignIn from "./pages/SignIn/SignIn";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { AuthProvider } from './admin/context/AuthContext';
-import { AuthProvider as SellerAuthProvider } from './context/AuthContext';
+import { AuthProvider as SellerAuthProvider } from './seller/context/AuthContext';
 import AppRoutes from './admin/routes/AppRoutes';
+import SellerRoutes from './seller/routes/SellerRoutes';
 import './admin/admin.css';
 
 
@@ -16,13 +17,19 @@ function App() {
       {/* We nest both providers so both sections work */}
       <AuthProvider>
         <SellerAuthProvider>
-          <AppRoutes />
+          <Routes>
+            {/* Admin routes (it uses absolute paths internally, so mounted at root wildcard) */}
+            <Route path="/*" element={<AppRoutes />} />
+            
+            {/* Seller routes (mounted under /seller/*) */}
+            <Route path="/seller/*" element={<SellerRoutes />} />
+
+            {/* Buyer routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/account" element={<Dashboard />} />
+          </Routes>
         </SellerAuthProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/account" element={<Dashboard />} />
-        </Routes>
       </AuthProvider>
     </BrowserRouter>
   );
