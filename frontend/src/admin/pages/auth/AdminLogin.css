@@ -1,15 +1,16 @@
 .handora-login-wrapper {
-  height: 100vh;
+  min-height: 100vh; /* Changed from fixed height to min-height */
   display: flex;
   background: white;
-  /* Removed overflow: hidden to ensure content is accessible if viewport is small */
+  position: relative;
 }
 
 /* LEFT PANEL: Artisanal Visuals */
 .visual-side {
-  flex: 1.1;
+  flex: 1.1; /* Reverted breadth to "as usual" */
   background: url('../../../assets/artisan_visual.png') center/cover no-repeat;
   position: relative;
+  min-height: 100%;
 }
 
 .visual-overlay {
@@ -70,7 +71,7 @@
 .brand-header {
   text-align: center;
   margin-bottom: 30px;
-  margin-top: 4rem; /* Adjusted for a balanced central position */
+  margin-top: 7rem; /* Lowered the logo and brand section further */
 }
 
 .logo-outer-container {

@@ -15,7 +15,7 @@ const generateOTP = () => {
 // STEP 1: Verify Email & Password, Send OTP
 exports.login = async (req, res) => {
   const email = req.body.email?.trim().toLowerCase();
-  const { password } = req.body;
+  const password = req.body.password?.trim();
   console.log("LOGIN_DEBUG: Attempting login for", email);
 
   try {
@@ -26,6 +26,7 @@ exports.login = async (req, res) => {
       console.log("LOGIN_DEBUG: Password Match SUCCESS");
       // Generate 6-digit OTP
       const otp = generateOTP();
+      console.log("LOGIN_DEBUG: Generated OTP for " + admin.email + ": " + otp);
       const expiryMinutes = parseInt(process.env.OTP_EXPIRY || 10);
       
       admin.otp = otp;
@@ -54,7 +55,8 @@ exports.login = async (req, res) => {
 
 // STEP 2: Verify OTP & Issue Full Token
 exports.verifyOTP = async (req, res) => {
-  const { email, otp } = req.body;
+  const email = req.body.email?.trim().toLowerCase();
+  const { otp } = req.body;
 
   try {
     const admin = await Admin.findOne({ 

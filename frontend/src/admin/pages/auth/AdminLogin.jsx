@@ -25,10 +25,14 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const response = await login({ email, password });
+      const response = await login({ 
+        email: email.trim(), 
+        password: password.trim() 
+      });
       
       // If backend says OTP is required, move to OTP step
       if (response.requiresOTP) {
+        setEmail(email.trim()); // Ensure email used for OTP verification is trimmed
         setStep('otp');
       }
     } catch (err) {
@@ -205,7 +209,7 @@ const AdminLogin = () => {
                   </button>
 
                   <div className="otp-footer">
-                    <p>No code received? <button type="button" className="text-link">Resend Code</button></p>
+                    <p>No code received? <button type="button" className="text-link" onClick={resendCode}>Resend Code</button></p>
                   </div>
                 </form>
               </div>
