@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import './Navbar.css'
 
 const navLinks = [
@@ -30,7 +31,7 @@ export default function Navbar() {
       <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
         <div className="navbar__inner container">
           {/* Logo */}
-          <a href="/" className="navbar__logo">
+          <Link to="/" className="navbar__logo">
             <div className="logo-mark">
               <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 4C20 4 8 12 8 24C8 30.627 13.373 36 20 36C26.627 36 32 30.627 32 24C32 12 20 4 20 4Z" fill="currentColor" opacity="0.15"/>
@@ -43,7 +44,7 @@ export default function Navbar() {
               <span className="logo-name">Handora</span>
               <span className="logo-slogan">Hand Made Haven</span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="navbar__links">
@@ -75,7 +76,7 @@ export default function Navbar() {
               </svg>
               <span className="cart-badge">3</span>
             </button>
-            <a href="#" className="nav-cta">Sign In</a>
+            <Link to="/signin" className="nav-cta">Sign In</Link>
           </div>
 
           {/* Hamburger */}
@@ -96,7 +97,7 @@ export default function Navbar() {
             {link.label}
           </a>
         ))}
-        <a href="#" className="mobile-menu__cta">Sign In</a>
+        <Link to="/signin" className="mobile-menu__cta" onClick={() => setMenuOpen(false)}>Sign In</Link>
       </div>
     </>
   )
