@@ -1,0 +1,299 @@
+.handora-login-wrapper {
+  height: 100vh;
+  display: flex;
+  background: white;
+  /* Removed overflow: hidden to ensure content is accessible if viewport is small */
+}
+
+/* LEFT PANEL: Artisanal Visuals */
+.visual-side {
+  flex: 1.1;
+  background: url('../../../assets/artisan_visual.png') center/cover no-repeat;
+  position: relative;
+}
+
+.visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(192, 86, 65, 0.4), rgba(38, 70, 83, 0.3));
+  display: flex;
+  align-items: flex-end;
+  padding: 80px;
+}
+
+.visual-text {
+  max-width: 500px;
+}
+
+.premium-label {
+  display: inline-block;
+  background: rgba(233, 196, 106, 0.9);
+  color: #264653;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.visual-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  color: white;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.visual-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* RIGHT PANEL: Login Card */
+.login-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-warm);
+}
+
+.auth-card-outer {
+  width: 100%;
+  max-width: 460px;
+  padding: 40px;
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 30px;
+  margin-top: 4rem; /* Adjusted for a balanced central position */
+}
+
+.logo-outer-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.logo-inner-container {
+  width: 130px;
+  height: 130px;
+  background: white;
+  border-radius: 50%;
+  padding: 0px; /* Reduced padding to make the image fill the circular container better */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.handora-prime-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensuring the circular logo covers the area */
+}
+
+.handora-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: var(--primary);
+  margin-top: 1.5rem; /* Balanced spacing relative to the logo */
+  margin-bottom: 0;
+  font-weight: 800;
+}
+
+.handora-subtitle {
+  font-size: 0.85rem; /* Reverted to original size */
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-top: 2px;
+}
+
+.auth-content-box {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(38, 70, 83, 0.08);
+}
+
+.stage-intro {
+  text-align: center;
+  margin-bottom: 30px;
+  margin-top: 2rem; /* Added spacing for the identity verification section */
+}
+
+.stage-intro h2 {
+  font-size: 1.4rem;
+  color: var(--text-charcoal);
+  margin-bottom: 10px;
+}
+
+.stage-intro p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.h-error-message {
+  background: #FFF0F0;
+  color: #E76F51;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 0.85rem;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid #FFE6E6;
+}
+
+.h-group {
+  margin-bottom: 24px;
+}
+
+.h-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-charcoal);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.h-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #F8F9FA;
+  border: 1px solid #EAEBEF;
+  border-radius: 10px;
+  padding: 0 18px;
+  height: 56px;
+  transition: all 0.2s;
+}
+
+.h-input-wrapper:focus-within {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(192, 86, 65, 0.08);
+}
+
+.h-icon { color: #A0AEC0; }
+.h-input-wrapper input {
+  border: none;
+  background: none;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  font-size: 1rem;
+  color: var(--text-charcoal);
+}
+
+.h-toggle {
+  background: none;
+  color: #A0AEC0;
+}
+
+.form-utils {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.h-check { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; }
+.forgot-link { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
+
+.handora-btn-submit {
+  width: 100%;
+  height: 56px;
+  background: var(--primary);
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 20px rgba(192, 86, 65, 0.2);
+  transition: all 0.3s;
+}
+
+.handora-btn-submit:hover {
+  background: #A64531;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(192, 86, 65, 0.3);
+}
+
+/* OTP STAGE */
+.shield-icon-box {
+  width: 70px;
+  height: 70px;
+  background: #E6F4F1;
+  color: #2A9D8F;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+}
+
+.otp-digit-group {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.digit-input {
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border: 2px solid #EAEBEF;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.digit-input:focus {
+  border-color: var(--primary);
+  background: #FFF9F8;
+}
+
+.otp-footer {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.text-link { background: none; color: var(--primary); font-weight: 700; margin-left: 5px; }
+
+.handora-login-footer {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.h-spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.animate-fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 1024px) {
+  .visual-side { display: none; }
+  .login-side { flex: 1; }
+}

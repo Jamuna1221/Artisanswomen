@@ -1,0 +1,64 @@
+.profile-banner {
+  height: 150px;
+  background: linear-gradient(135deg, #C05641, #E9C46A);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: -60px;
+}
+
+.profile-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.profile-card {
+  padding-top: 20px;
+}
+
+.p-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 0 10px 30px;
+  border-bottom: 1px solid var(--bg-warm);
+}
+
+.p-avatar-large {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border: 5px solid white;
+  box-shadow: var(--shadow-md);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: -60px;
+}
+
+.p-main-info h2 { font-size: 1.8rem; margin-bottom: 4px; }
+.p-title { color: var(--text-muted); font-size: 1rem; }
+
+.p-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  padding: 30px 10px;
+}
+
+.p-det-item { display: flex; gap: 15px; }
+.p-det-icon { color: var(--primary); font-weight: 600; }
+.p-det-content label { display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.p-det-content p { font-size: 1rem; font-weight: 600; }
+
+.p-activity h3 { margin-bottom: 25px; font-size: 1.1rem; }
+
+.activity-timeline { padding: 10px 0; }
+.time-item { display: flex; gap: 20px; position: relative; padding-bottom: 30px; }
+.time-dot { width: 12px; height: 12px; background: var(--primary); border: 3px solid white; box-shadow: 0 0 0 2px var(--primary); border-radius: 50%; z-index: 2; margin-top: 5px; }
+.time-line { position: absolute; left: 5px; top: 10px; width: 2px; height: 100%; background: var(--border-light); z-index: 1; }
+.time-text p { font-size: 0.95rem; font-weight: 500; }
+.time-text span { font-size: 0.8rem; color: var(--text-muted); }

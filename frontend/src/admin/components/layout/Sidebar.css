@@ -1,0 +1,126 @@
+.sidebar-container {
+  width: 280px;
+  height: 100vh;
+  background: white;
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.02);
+}
+
+.sidebar-branding {
+  padding: 60px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid var(--bg-warm);
+}
+
+.h-logo {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  background: white;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; /* Restored original size */
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.brand-tagline {
+  font-size: 0.65rem; /* Restored original size */
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 10px; /* Increased margin to lower the text */
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 30px 15px;
+  overflow-y: auto;
+}
+
+.nav-group {
+  margin-bottom: 35px;
+}
+
+.nav-group h4 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  font-weight: 800;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: var(--text-charcoal);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: var(--transition-fast);
+  margin-bottom: 4px;
+}
+
+.nav-item:hover {
+  background: var(--bg-warm);
+  color: var(--primary);
+}
+
+.nav-item.active {
+  background: #FFF4F2;
+  color: var(--primary);
+}
+
+.nav-item-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-footer {
+  padding: 20px 15px;
+  border-top: 1px solid var(--border-light);
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: #DC2626;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.logout-btn:hover {
+  background: #FEF2F2;
+}

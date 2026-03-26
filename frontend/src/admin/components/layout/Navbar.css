@@ -1,0 +1,105 @@
+.navbar-container {
+  height: 80px;
+  background: white;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.nav-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-warm);
+  padding: 10px 20px;
+  border-radius: 12px;
+  width: 400px;
+}
+
+.nav-search input {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 0.9rem;
+  color: var(--text-charcoal);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.status-badge {
+  background: #E6F4F1;
+  color: #2A9D8F;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notif-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.admin-brief {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 1px solid var(--border-light);
+  padding-left: 25px;
+}
+
+.admin-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.admin-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-info span {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.admin-role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

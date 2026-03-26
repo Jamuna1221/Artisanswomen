@@ -1,0 +1,57 @@
+.table-container {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  padding: 15px 20px;
+  background-color: var(--bg-color);
+  color: var(--text-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-table td {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.admin-table tr:hover {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+.t-loading, .t-empty {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--text-light);
+}
+
+.action-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn.view { color: var(--accent-color); background: rgba(42, 157, 143, 0.1); }
+.icon-btn.edit { color: var(--secondary-color); background: rgba(233, 196, 106, 0.1); }
+.icon-btn.delete { color: var(--error-color); background: rgba(231, 111, 81, 0.1); }
