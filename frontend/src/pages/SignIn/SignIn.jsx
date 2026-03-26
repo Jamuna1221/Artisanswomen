@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 
 const EyeIcon = ({ open }) => (
@@ -98,6 +99,7 @@ const ArtisanIllustration = () => (
 );
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -132,7 +134,10 @@ export default function SignIn() {
     const newErrors = validate();
     if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
     setLoading(true);
-    setTimeout(() => setLoading(false), 1800);
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/account");
+    }, 1800);
   };
 
   const switchMode = () => {
