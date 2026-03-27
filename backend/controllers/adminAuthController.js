@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
+const AuditLog = require("../models/AuditLog");
+const Notification = require("../models/Notification");
+const SystemSetting = require("../models/SystemSetting");
 const { sendOtpEmail } = require("../utils/mail");
 
 const generateToken = (id) => {
@@ -69,16 +72,25 @@ exports.verifyOTP = async (req, res) => {
       return res.status(401).json({ message: "Invalid or expired verification code." });
     }
 
-    // Clear OTP after successful verification
-    admin.otp = undefined;
-    admin.otpExpires = undefined;
+    // Update last login
+    admin.lastLogin = new Date();
     await admin.save();
+
+    // Log the session activity
+    await AuditLog.create({
+      adminId: admin._id,
+      action: "Admin Login",
+      details: `Successful login from ${req.headers['user-agent'] || 'Unknown Device'}`,
+      ipAddress: req.ip
+    });
 
     res.status(200).json({
       _id: admin._id,
       name: admin.name,
       email: admin.email,
       role: admin.role,
+      lastLogin: admin.lastLogin,
+      createdAt: admin.createdAt,
       token: generateToken(admin._id),
       message: "Security verification successful."
     });
@@ -114,10 +126,147 @@ exports.resendOTP = async (req, res) => {
 
 // Profile Access
 exports.getProfile = async (req, res) => {
-  const admin = await Admin.findById(req.admin._id).select("-password -otp -otpExpires");
-  if (admin) {
-    res.json(admin);
-  } else {
-    res.status(404).json({ message: "Admin profile not found" });
+  try {
+    const admin = await Admin.findById(req.admin._id).select("-password -otp -otpExpires");
+    if (admin) {
+      res.json(admin);
+    } else {
+      res.status(404).json({ message: "Admin profile not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update Profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin._id);
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
+
+    admin.name = req.body.name || admin.name;
+    admin.email = req.body.email || admin.email;
+    if (req.body.password) {
+      admin.password = req.body.password;
+    }
+    admin.profileImage = req.body.profileImage || admin.profileImage;
+
+    const updatedAdmin = await admin.save();
+
+    // Log update activity
+    await AuditLog.create({
+      adminId: admin._id,
+      action: "Profile Update",
+      details: "Admin updated profile details",
+      ipAddress: req.ip
+    });
+
+    res.json({
+      _id: updatedAdmin._id,
+      name: updatedAdmin.name,
+      email: updatedAdmin.email,
+      role: updatedAdmin.role,
+      profileImage: updatedAdmin.profileImage,
+      message: "Profile updated successfully"
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get Activity Log
+exports.getActivity = async (req, res) => {
+  try {
+    const logs = await AuditLog.find({ adminId: req.admin._id })
+      .sort({ createdAt: -1 })
+      .limit(20);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Change Password
+exports.changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const admin = await Admin.findById(req.admin._id);
+
+    if (admin && (await admin.matchPassword(oldPassword))) {
+      admin.password = newPassword;
+      await admin.save();
+
+      await AuditLog.create({
+        adminId: admin._id,
+        action: "Password Change",
+        details: "Admin updated account password",
+        ipAddress: req.ip
+      });
+
+      res.json({ message: "Password updated successfully" });
+    } else {
+      res.status(401).json({ message: "Invalid old password" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Notifications
+exports.getNotifications = async (req, res) => {
+  try {
+    const notifications = await Notification.find({ adminId: req.admin._id })
+      .sort({ createdAt: -1 })
+      .limit(50);
+    const unreadCount = await Notification.countDocuments({ adminId: req.admin._id, isRead: false });
+    res.json({ notifications, unreadCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.markAsRead = async (req, res) => {
+  try {
+    await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+    res.json({ message: "Notification marked as read" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.markAllAsRead = async (req, res) => {
+  try {
+    await Notification.updateMany({ adminId: req.admin._id, isRead: false }, { isRead: true });
+    res.json({ message: "All notifications marked as read" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// System Settings
+exports.getSystemSettings = async (req, res) => {
+  try {
+    let settings = await SystemSetting.findOne();
+    if (!settings) {
+      settings = await SystemSetting.create({});
+    }
+    res.json(settings);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updateSystemSettings = async (req, res) => {
+  try {
+    let settings = await SystemSetting.findOne();
+    if (!settings) {
+      settings = new SystemSetting(req.body);
+    } else {
+      Object.assign(settings, req.body);
+    }
+    await settings.save();
+    res.json(settings);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

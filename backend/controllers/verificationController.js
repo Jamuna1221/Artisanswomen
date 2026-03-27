@@ -1,6 +1,7 @@
 const VerificationRequest = require("../models/VerificationRequest");
 const ArtisanProfile = require("../models/ArtisanProfile");
 const User = require("../models/User");
+const { createAdminNotification } = require("../utils/notificationHelper");
 
 const getVerifications = async (req, res) => {
   try {
@@ -54,6 +55,12 @@ const updateVerificationStatus = async (req, res) => {
         isVerified: status === "Verified",
       }
     );
+
+    // Notify admin
+    await createAdminNotification("Seller", `Seller verification request ${status}`, {
+      artisanId: v.artisanId,
+      reviewedBy: req.admin.name
+    });
 
     res.json({ message: `Verification ${status}`, verification: v });
   } catch (err) {

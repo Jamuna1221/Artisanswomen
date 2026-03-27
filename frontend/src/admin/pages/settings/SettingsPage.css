@@ -13,7 +13,7 @@
 .s-tab {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
   padding: 14px 20px;
   border-radius: var(--radius-sm);
   background: white;
@@ -21,12 +21,33 @@
   font-weight: 500;
   border: 1px solid var(--border-light);
   transition: var(--transition);
+  cursor: pointer;
+}
+
+.tab-label-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tab-badge {
+  background: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
 }
 
 .s-tab.active {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
+}
+
+.s-tab.active .tab-badge {
+  background: white;
+  color: var(--primary);
 }
 
 .s-tab:hover:not(.active) {
@@ -95,3 +116,165 @@
 
 .toggle-switch.active { background: #2A9D8F; }
 .toggle-switch.active::after { left: 24px; }
+
+.s-pass-form {
+  padding-top: 20px;
+}
+
+.s-divider {
+  height: 1px;
+  background: var(--bg-warm);
+  margin: 30px 0;
+}
+
+.status-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-label.verified {
+  background: #E6F4F1;
+  color: #2A9D8F;
+}
+
+.login-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.log-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: var(--bg-warm);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.log-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.log-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Notifications */
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.n-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+
+.n-item.unread {
+  background: #FEF6F5;
+  border-color: #F8D7D3;
+}
+
+.n-item:hover {
+  transform: translateX(5px);
+  border-color: var(--primary);
+}
+
+.n-type-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.n-type-dot.user { background: #457B9D; }
+.n-type-dot.seller { background: #E9C46A; }
+.n-type-dot.complaint { background: #E76F51; }
+.n-type-dot.security { background: #C05641; }
+.n-type-dot.system { background: #264653; }
+
+.n-content { flex: 1; }
+.n-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.n-type { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+.n-time { font-size: 0.75rem; color: var(--text-muted); }
+.n-content p { font-size: 0.9rem; color: var(--text-charcoal); line-height: 1.4; }
+
+.unread-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 rgba(192, 86, 65, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(192, 86, 65, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(192, 86, 65, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(192, 86, 65, 0); }
+}
+
+/* System Settings */
+.s-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.s-toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #F8F9FA;
+  border-radius: 12px;
+}
+
+.ti-info strong { display: block; font-size: 0.95rem; margin-bottom: 4px; }
+.ti-info p { font-size: 0.8rem; color: var(--text-muted); }
+
+.s-header-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: var(--text-muted);
+  gap: 15px;
+}
+
+.muted-icon { opacity: 0.3; }
+
+.success-text { color: #2A9D8F; }

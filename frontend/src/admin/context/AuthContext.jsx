@@ -57,7 +57,8 @@ export const AuthProvider = ({ children }) => {
       login, 
       verifyOtpLogin, 
       resendAdminOtp,
-      logout, 
+      logout,
+      setAdmin,
       isAuthenticated: !!admin, 
       loading 
     }}>

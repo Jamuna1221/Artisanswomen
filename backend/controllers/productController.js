@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const { createAdminNotification } = require("../utils/notificationHelper");
 
 const getProducts = async (req, res) => {
   try {
@@ -31,6 +32,13 @@ const updateProductStatus = async (req, res) => {
       { new: true }
     );
     if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // Notify admin
+    await createAdminNotification("Product", `Product status updated to ${status}`, {
+      productId: product._id,
+      rejectionReason: rejectionReason || "N/A"
+    });
+
     res.json({ message: `Product ${status}`, product });
   } catch (err) {
     res.status(500).json({ message: err.message });

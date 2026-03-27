@@ -1,4 +1,5 @@
 const Complaint = require("../models/Complaint");
+const { createAdminNotification } = require("../utils/notificationHelper");
 
 const getComplaints = async (req, res) => {
   try {
@@ -38,6 +39,12 @@ const respondToComplaint = async (req, res) => {
       { new: true }
     );
     if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    // Notify admin 
+    await createAdminNotification("Complaint", `Complaint response sent by admin`, {
+      complaintId: complaint._id
+    });
+
     res.json({ message: "Reply sent", complaint });
   } catch (err) {
     res.status(500).json({ message: err.message });
