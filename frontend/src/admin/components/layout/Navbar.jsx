@@ -35,7 +35,7 @@ const Navbar = () => {
           <span>Secure Admin Access</span>
         </div>
 
-        <Link to="/admin/settings" className="nav-icon-btn">
+        <Link to="/admin/notifications" className="nav-icon-btn">
           <Bell size={22} />
           {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
         </Link>

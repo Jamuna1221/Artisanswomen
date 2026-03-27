@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     // --- Identity ---
     name: { type: String, required: true, trim: true },
+    role: { type: String, enum: ["seller", "buyer", "admin"], default: "seller" },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String }, // set during registration
     age: { type: Number },
@@ -51,6 +52,9 @@ const userSchema = new mongoose.Schema(
       default: "Pending",
     },
     rejectionReason: { type: String },
+    approvedAt: { type: Date },
+    rejectedAt: { type: Date },
+    approvalEmailSent: { type: Boolean, default: false },
 
     // --- OTP (for signup only) ---
     otp: { type: String },

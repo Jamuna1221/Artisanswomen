@@ -9,6 +9,9 @@ const generateToken = require("../utils/generateToken");
 const { sendOtpEmail, sendApprovalEmail, sendRejectionEmail } = require("../utils/sendEmail");
 const { protect } = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
+const ArtisanProfile = require("../models/ArtisanProfile");
+const VerificationRequest = require("../models/VerificationRequest");
+const { createAdminNotification } = require("../utils/notificationHelper");
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
 const generateOtp = () =>
@@ -193,6 +196,43 @@ router.post(
       }
 
       await user.save();
+
+      // Create Artisan Profile to sync data
+      const artisanProfile = new ArtisanProfile({
+        userId: user._id,
+        phone: phone,
+        location: `${city}, ${district}, ${state}`,
+        craftType: parsedCraftType.join(", "),
+        experience: experience,
+        bio: bio,
+        isVerified: false,
+        verificationStatus: "Pending"
+      });
+      await artisanProfile.save();
+
+      // Create Verification Request
+      const vr = new VerificationRequest({
+        artisanId: user._id,
+        status: "Pending"
+      });
+      await vr.save();
+
+      // Notify Admins
+      if (typeof createAdminNotification === 'function') {
+        try {
+            await createAdminNotification("Seller", `New seller registration received from ${user.name}`, {
+                sellerName: user.name,
+                email: user.email,
+                phone: user.phone,
+                craftType: parsedCraftType.join(", "),
+                createdAt: user.createdAt || new Date(),
+                status: "Pending",
+                artisanId: user._id
+            });
+        } catch(notifErr) {
+            console.error("Failed to create admin notification:", notifErr);
+        }
+      }
 
       // Issue a long-lived auth token
       const authToken = generateToken(user._id, "7d");

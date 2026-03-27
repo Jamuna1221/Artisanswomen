@@ -9,8 +9,8 @@ const statusConfig = {
     icon: '⏳',
     title: 'Application Under Review',
     pillClass: 'pending',
-    message: 'Your registration has been submitted successfully! Our admin team is reviewing your details and documents. This usually takes 1–3 business days.',
-    sub: 'You will receive an email notification once your account is approved.',
+    message: 'Your application has been submitted successfully. Our team will review it and notify you by email.',
+    sub: 'You can access your seller dashboard only after admin approval.',
   },
   Approved: {
     icon: '🎉',

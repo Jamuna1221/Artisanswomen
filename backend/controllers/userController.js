@@ -1,11 +1,13 @@
 const User = require("../models/User");
 const ArtisanProfile = require("../models/ArtisanProfile");
+const { sendApprovalEmail, sendRejectionEmail } = require("../utils/sendEmail");
 
 const getArtisans = async (req, res) => {
   try {
-    const { status, search, page = 1, limit = 10 } = req.query;
-    const filter = { role: "artisan" };
+    const { status, verificationStatus, search, page = 1, limit = 10 } = req.query;
+    const filter = { role: "seller" };
     if (status) filter.status = status;
+    if (verificationStatus) filter.verificationStatus = verificationStatus;
     if (search) filter.$or = [{ name: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }];
 
     const total = await User.countDocuments(filter);
@@ -73,4 +75,69 @@ const getUserById = async (req, res) => {
   }
 };
 
-module.exports = { getArtisans, getBuyers, updateUserStatus, getUserById };
+const approveSeller = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.verificationStatus = "Approved";
+    user.isVerified = true;
+    user.approvedAt = new Date();
+    user.status = "active"; // Ensure active status
+    
+    // Send email
+    try {
+      await sendApprovalEmail(user.email, user.name);
+      user.approvalEmailSent = true;
+    } catch (emailErr) {
+      console.error("Failed to send approval email:", emailErr);
+      user.approvalEmailSent = false;
+    }
+
+    await user.save();
+
+    // Sync profile if exists
+    await ArtisanProfile.findOneAndUpdate(
+      { userId: user._id },
+      { verificationStatus: "Verified", isVerified: true }
+    );
+
+    res.json({ message: "Seller approved successfully", user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const rejectSeller = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.verificationStatus = "Rejected";
+    user.isVerified = false;
+    user.rejectionReason = reason || "Does not meet our criteria for a seller account.";
+    user.rejectedAt = new Date();
+    
+    // Send email
+    try {
+      await sendRejectionEmail(user.email, user.name, user.rejectionReason);
+    } catch (emailErr) {
+      console.error("Failed to send rejection email:", emailErr);
+    }
+
+    await user.save();
+
+    // Sync profile if exists
+    await ArtisanProfile.findOneAndUpdate(
+      { userId: user._id },
+      { verificationStatus: "Rejected", isVerified: false }
+    );
+
+    res.json({ message: "Seller rejected successfully", user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = { getArtisans, getBuyers, updateUserStatus, getUserById, approveSeller, rejectSeller };
