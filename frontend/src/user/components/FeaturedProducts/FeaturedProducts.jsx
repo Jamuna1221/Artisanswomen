@@ -3,17 +3,17 @@ import { products } from '../../data'
 import './FeaturedProducts.css'
 
 const badgeColors = {
-  'Best Seller':     { bg: '#7C3A2D', color: '#FFFDF9' },
-  'New Arrival':     { bg: '#C9924A', color: '#FFFDF9' },
-  'Handpicked':      { bg: '#4A3728', color: '#FFFDF9' },
+  'Best Seller': { bg: '#7C3A2D', color: '#FFFDF9' },
+  'New Arrival': { bg: '#C9924A', color: '#FFFDF9' },
+  'Handpicked': { bg: '#4A3728', color: '#FFFDF9' },
   'Limited Edition': { bg: '#5A2820', color: '#FFFDF9' },
-  'Artisan Pick':    { bg: '#7A5C45', color: '#FFFDF9' },
+  'Artisan Pick': { bg: '#7A5C45', color: '#FFFDF9' },
 }
 
 function StarRating({ rating }) {
   return (
     <div className="stars">
-      {[1,2,3,4,5].map(s => (
+      {[1, 2, 3, 4, 5].map(s => (
         <span key={s} className={`star ${s <= Math.floor(rating) ? 'star--full' : s - 0.5 <= rating ? 'star--half' : 'star--empty'}`}>★</span>
       ))}
       <span className="rating-val">{rating}</span>
@@ -51,7 +51,7 @@ function ProductCard({ product, index }) {
           aria-label="Toggle wishlist"
         >
           <svg viewBox="0 0 24 24" fill={wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
 

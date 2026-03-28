@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
@@ -6,69 +6,69 @@ import "./Dashboard.css";
 const Icons = {
   orders: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 01-8 0"/>
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 01-8 0" />
     </svg>
   ),
   wishlist: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
     </svg>
   ),
   address: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-      <circle cx="12" cy="10" r="3"/>
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+      <circle cx="12" cy="10" r="3" />
     </svg>
   ),
   profile: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   ),
   contact: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
     </svg>
   ),
   logout: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-      <polyline points="16 17 21 12 16 7"/>
-      <line x1="21" y1="12" x2="9" y2="12"/>
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
     </svg>
   ),
   chevron: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
+      <polyline points="9 18 15 12 9 6" />
     </svg>
   ),
   menu: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
     </svg>
   ),
   close: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   ),
   sparkle: (
     <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
     </svg>
   ),
 };
 
 // ── Nav items ───────────────────────────────────────────────
 const NAV_ITEMS = [
-  { id: "orders",   label: "My Orders & Returns", icon: Icons.orders },
-  { id: "wishlist", label: "Wishlist",             icon: Icons.wishlist },
-  { id: "address",  label: "Address Book",         icon: Icons.address },
-  { id: "profile",  label: "My Profile",           icon: Icons.profile },
-  { id: "contact",  label: "Contact Us",           icon: Icons.contact },
+  { id: "orders", label: "My Orders & Returns", icon: Icons.orders },
+  { id: "wishlist", label: "Wishlist", icon: Icons.wishlist },
+  { id: "address", label: "Address Book", icon: Icons.address },
+  { id: "profile", label: "My Profile", icon: Icons.profile },
+  { id: "contact", label: "Contact Us", icon: Icons.contact },
 ];
 
 // ── Dashboard cards ────────────────────────────────────────
@@ -79,7 +79,7 @@ const CARDS = [
     title: "My Orders & Returns",
     subtitle: "Track your orders, request returns, or reorder favourites",
     accent: "#7C3A2D",
-    badge: "3 Active",
+    badge: null,
   },
   {
     id: "wishlist",
@@ -87,7 +87,7 @@ const CARDS = [
     title: "My Wishlist",
     subtitle: "Save and revisit pieces that caught your eye",
     accent: "#A07850",
-    badge: "12 Items",
+    badge: null,
   },
   {
     id: "address",
@@ -115,22 +115,67 @@ const CARDS = [
   },
 ];
 
-// ── Mock user ───────────────────────────────────────────────
-const USER = { name: "Priya Sharma", email: "priya@example.com", initials: "PS" };
 
 export default function Account() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // ── PART 4: Protected Route Logic ───────────────────────
+  useEffect(() => {
+    const token = localStorage.getItem("token") || localStorage.getItem("buyerToken");
+    if (!token) {
+      console.log("No token found, redirecting to /signin"); // Debugging check
+      navigate("/signin", { replace: true });
+      return;
+    }
+
+    // PART 3: Get user from localStorage
+    try {
+      const storedUser = localStorage.getItem("user");
+      console.log("Stored user in Dashboard:", storedUser); // Debugging check
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        // Fallback if no user in localStorage but token exists
+        setUser({ name: "Guest" });
+      }
+    } catch (error) {
+      console.error("Error parsing user from localStorage", error);
+      setUser({ name: "Guest" });
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("buyerToken");
+    localStorage.removeItem("user");
+    navigate("/signin");
+  };
+
+  console.log("User:", user);
+
+  if (!user) {
+    return <p>Loading...</p>;
+  }
+
+  // Derive display values from live user data
+  // PART 3: Display first letter and Fallback to "Guest"
+  const displayName = user?.name || "Guest";
+  const initials = displayName.charAt(0).toUpperCase();
+  const firstName = displayName.split(" ")[0] || "Guest";
 
   const handleNav = (id) => {
     setActiveSection(id);
     setSidebarOpen(false);
   };
 
-  const handleLogout = () => {
-    // clear auth state here
-    navigate("/signin");
+  // ── Dynamic badge helper ─────────────
+  const getBadge = (id) => {
+    if (id === "orders") return user?.ordersCount > 0 ? `${user.ordersCount} Active` : null;
+    if (id === "wishlist") return user?.wishlistCount > 0 ? `${user.wishlistCount} Items` : null;
+    return null;
   };
 
   return (
@@ -158,12 +203,12 @@ export default function Account() {
         {/* User avatar block */}
         <div className="acc-user-block">
           <div className="acc-avatar">
-            <span>{USER.initials}</span>
+            <span>{initials}</span>
             <span className="acc-avatar-ring" />
           </div>
           <div className="acc-user-info">
-            <p className="acc-user-name">{USER.name}</p>
-            <p className="acc-user-email">{USER.email}</p>
+            <p className="acc-user-name">{displayName}</p>
+            <p className="acc-user-email">{user?.email || ""}</p>
           </div>
         </div>
 
@@ -208,7 +253,7 @@ export default function Account() {
         {/* Page header */}
         <div className="acc-page-header">
           <div className="acc-page-header-text">
-            <p className="acc-greeting">Good to see you,</p>
+            <p className="acc-greeting">Good to see you, {firstName}</p>
             <h1 className="acc-page-title">My Account</h1>
           </div>
           <div className="acc-header-ornament">✦</div>
@@ -227,17 +272,17 @@ export default function Account() {
             {/* Summary strip */}
             <div className="acc-stats-strip">
               <div className="acc-stat">
-                <span className="acc-stat-num">3</span>
+                <span className="acc-stat-num">{user?.ordersCount || 0}</span>
                 <span className="acc-stat-label">Active Orders</span>
               </div>
               <div className="acc-stat-divider" />
               <div className="acc-stat">
-                <span className="acc-stat-num">12</span>
+                <span className="acc-stat-num">{user?.wishlistCount || 0}</span>
                 <span className="acc-stat-label">Wishlist Items</span>
               </div>
               <div className="acc-stat-divider" />
               <div className="acc-stat">
-                <span className="acc-stat-num">2</span>
+                <span className="acc-stat-num">—</span>
                 <span className="acc-stat-label">Saved Addresses</span>
               </div>
             </div>
@@ -259,9 +304,9 @@ export default function Account() {
                     {card.icon}
                   </span>
 
-                  {/* Badge */}
-                  {card.badge && (
-                    <span className="acc-card-badge">{card.badge}</span>
+                  {/* Badge — derived from live profile counts */}
+                  {getBadge(card.id) && (
+                    <span className="acc-card-badge">{getBadge(card.id)}</span>
                   )}
 
                   {/* Text */}
@@ -292,18 +337,18 @@ export default function Account() {
 // ── Placeholder for section pages ──────────────────────────
 function SectionPlaceholder({ id, nav, onBack }) {
   const msgs = {
-    orders:   { sub: "Your order history and return requests will appear here.", empty: "No orders yet — start exploring artisan collections." },
+    orders: { sub: "Your order history and return requests will appear here.", empty: "No orders yet — start exploring artisan collections." },
     wishlist: { sub: "All your saved pieces in one place.", empty: "Your wishlist is empty — save items you love." },
-    address:  { sub: "Manage your delivery addresses.", empty: "No addresses saved yet." },
-    profile:  { sub: "Your personal details and account preferences.", empty: "" },
-    contact:  { sub: "Reach our team — we're here to help.", empty: "" },
+    address: { sub: "Manage your delivery addresses.", empty: "No addresses saved yet." },
+    profile: { sub: "Your personal details and account preferences.", empty: "" },
+    contact: { sub: "Reach our team — we're here to help.", empty: "" },
   };
   const info = msgs[id] || {};
 
   return (
     <div className="acc-section-view">
       <button className="acc-back-btn" onClick={onBack}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="15 18 9 12 15 6" /></svg>
         Back to overview
       </button>
 

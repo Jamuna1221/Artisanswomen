@@ -10,7 +10,7 @@ const PAGE_TITLES = {
   '/seller/dashboard/orders': { title: 'Orders', emoji: '📦' },
   '/seller/dashboard/earnings': { title: 'Earnings', emoji: '💵' },
   '/seller/dashboard/reviews': { title: 'Reviews', emoji: '⭐' },
-  '/seller/dashboard/messages': { title: 'Messages', emoji: '💬' },
+  '/seller/dashboard/messages': { title: 'Seller Forums', emoji: '💬' },
   '/seller/dashboard/settings': { title: 'Settings', emoji: '⚙️' },
 };
 

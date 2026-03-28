@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from 'react';
-import Home from './pages/Home/Home';
-import SignIn from "./pages/SignIn/SignIn";
-import Dashboard from "./pages/Dashboard/Dashboard";
+import Home from './user/pages/Home/Home';
+import SignIn from "./user/pages/SignIn/SignIn";
+import Dashboard from "./user/pages/Dashboard/Dashboard";
+import EmailOtpVerification from "./user/pages/OTP/OTP";
 import { AuthProvider } from './admin/context/AuthContext';
 import { AuthProvider as SellerAuthProvider } from './seller/context/AuthContext';
 import AppRoutes from './admin/routes/AppRoutes';
@@ -27,7 +28,10 @@ function App() {
             {/* Buyer routes */}
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn />} />
+            <Route path="/otp" element={<EmailOtpVerification />} />
+            <Route path="/verify-otp" element={<EmailOtpVerification />} />
             <Route path="/account" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </SellerAuthProvider>
       </AuthProvider>

@@ -69,11 +69,11 @@ router.post("/verify-otp", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    if (!user.otp || user.otpExpiry < new Date())
+      return res.status(400).json({ message: "OTP has expired. Please request a new one." });
+
     if (user.otp !== otp)
       return res.status(400).json({ message: "Invalid OTP" });
-
-    if (user.otpExpiry < new Date())
-      return res.status(400).json({ message: "OTP has expired" });
 
     user.isOtpVerified = true;
     user.otp = undefined;
@@ -304,6 +304,7 @@ router.post("/login", async (req, res) => {
       verificationStatus: user.verificationStatus,
       name: user.name,
       email: user.email,
+      _id: user._id
     });
   } catch (err) {
     console.error("login error:", err);
@@ -315,9 +316,9 @@ router.post("/login", async (req, res) => {
 // Get current seller's verification status (JWT protected)
 router.get("/status", protect, async (req, res) => {
   try {
-    const { name, email, verificationStatus, rejectionReason, createdAt } =
+    const { _id, name, email, verificationStatus, rejectionReason, createdAt } =
       req.user;
-    res.json({ name, email, verificationStatus, rejectionReason, createdAt });
+    res.json({ _id, name, email, verificationStatus, rejectionReason, createdAt });
   } catch (err) {
     res.status(500).json({ message: "Failed to get status", error: err.message });
   }

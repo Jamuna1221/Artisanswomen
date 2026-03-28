@@ -21,7 +21,7 @@ const navItems = [
   { name: 'Orders', path: '/seller/dashboard/orders', icon: <ShoppingCart size={20} /> },
   { name: 'Earnings', path: '/seller/dashboard/earnings', icon: <IndianRupee size={20} /> },
   { name: 'Reviews', path: '/seller/dashboard/reviews', icon: <Star size={20} /> },
-  { name: 'Messages', path: '/seller/dashboard/messages', icon: <MessageSquare size={20} /> },
+  { name: 'Seller Forums', path: '/seller/dashboard/messages', icon: <MessageSquare size={20} /> },
   { name: 'Settings', path: '/seller/dashboard/settings', icon: <Settings size={20} /> },
 ];
 

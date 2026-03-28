@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from 'lucide-react';
 import logo from '../../../assets/logo.png';
-import artisanImg from '../../../assets/artisan_visual.png';
 import './AdminLogin.css';
 
 const AdminLogin = () => {

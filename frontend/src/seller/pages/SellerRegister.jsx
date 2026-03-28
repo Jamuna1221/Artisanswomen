@@ -127,6 +127,7 @@ export default function SellerRegister() {
       });
 
       login(res.data.authToken, {
+        _id: res.data._id,
         name: res.data.name,
         email: res.data.email,
         verificationStatus: res.data.verificationStatus,

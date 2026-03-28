@@ -1,6 +1,6 @@
 /* ─────────────────────────────────────────────
-   AUTH PAGE — Premium Artisan Marketplace
-   Palette: Cream · Warm Brown · Gold · Terracotta
+   OTP VERIFICATION PAGE — Artisan Marketplace
+   Extends SignIn.css design tokens & patterns
 ───────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
 
@@ -25,12 +25,15 @@
   --text-mid: #6B4C3B;
   --text-soft: #A08070;
   --error: #C0392B;
+  --success: #2E7D5E;
   --white: #FFFFFF;
   --radius: 14px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Root Layout ── */
+/* ══════════════════════════════════════════
+   ROOT LAYOUT (shared with SignIn)
+══════════════════════════════════════════ */
 .auth-root {
   display: flex;
   min-height: 100vh;
@@ -40,7 +43,7 @@
 }
 
 /* ══════════════════════════════════════════
-   LEFT PANEL
+   LEFT PANEL (shared with SignIn)
 ══════════════════════════════════════════ */
 .auth-left {
   flex: 1;
@@ -53,7 +56,6 @@
   overflow: hidden;
 }
 
-/* Subtle texture overlay */
 .auth-left::before {
   content: '';
   position: absolute;
@@ -64,7 +66,6 @@
   pointer-events: none;
 }
 
-/* Decorative corner flourish */
 .auth-left::after {
   content: '✦';
   position: absolute;
@@ -87,7 +88,7 @@
   width: 100%;
 }
 
-/* Brand mark */
+/* Brand */
 .auth-brand {
   display: flex;
   align-items: center;
@@ -122,18 +123,11 @@
 }
 
 @keyframes floatY {
-
   0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-12px);
-  }
+  100% { transform: translateY(0); }
+  50%  { transform: translateY(-12px); }
 }
 
-/* Left text */
 .auth-left-text {
   text-align: center;
 }
@@ -155,7 +149,6 @@
   line-height: 1.6;
 }
 
-/* Dots */
 .auth-left-dots {
   display: flex;
   gap: 0.45rem;
@@ -178,7 +171,7 @@
 }
 
 /* ══════════════════════════════════════════
-   RIGHT PANEL
+   RIGHT PANEL (shared with SignIn)
 ══════════════════════════════════════════ */
 .auth-right {
   flex: 0 0 480px;
@@ -200,7 +193,7 @@
   background: linear-gradient(to bottom, transparent, var(--beige) 30%, var(--beige) 70%, transparent);
 }
 
-/* Card */
+/* ── Card ── */
 .auth-card {
   width: 100%;
   max-width: 400px;
@@ -209,52 +202,39 @@
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Toggle Pills ── */
-.auth-toggle-wrap {
+/* ── OTP-specific card overrides ── */
+.otp-card {
   display: flex;
-  background: var(--cream-deep);
-  border: 1px solid var(--beige);
-  border-radius: 50px;
-  padding: 4px;
-  margin-bottom: 2rem;
-  gap: 4px;
-}
-
-.auth-toggle-btn {
-  flex: 1;
-  padding: 0.55rem 1rem;
-  border: none;
-  border-radius: 50px;
-  background: transparent;
-  color: var(--text-soft);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-  white-space: nowrap;
-}
-
-.auth-toggle-btn.active {
-  background: var(--brown);
-  color: var(--white);
-  box-shadow: 0 4px 14px rgba(124, 58, 45, 0.3);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
 }
 
 /* ── Header ── */
 .auth-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.otp-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.otp-shield-icon {
+  margin-bottom: 1rem;
+  animation: pulse-shield 2.8s ease-in-out infinite;
+}
+
+@keyframes pulse-shield {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.08); opacity: 0.85; }
 }
 
 .auth-title {
@@ -267,6 +247,11 @@
   margin-bottom: 0.45rem;
 }
 
+.otp-title {
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
+}
+
 .auth-subtitle {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1rem;
@@ -274,152 +259,240 @@
   font-style: italic;
 }
 
-/* ── Form ── */
-.auth-form {
+/* ── Email row ── */
+.otp-email-row {
   display: flex;
-  flex-direction: column;
-  gap: 1.4rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
 }
 
-/* Name row */
-.auth-name-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.35s ease;
-}
-
-.auth-name-row.visible {
-  max-height: 120px;
-  opacity: 1;
-}
-
-/* Field */
-.auth-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  position: relative;
-}
-
-.auth-label {
-  font-size: 0.72rem;
+.otp-email-display {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-  transition: color var(--transition);
+  color: var(--text-dark);
+  background: var(--cream-deep);
+  border: 1px solid var(--beige);
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  letter-spacing: 0.01em;
 }
 
-.auth-field:focus-within .auth-label {
+.otp-change-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--brown);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition);
+  padding: 0;
 }
 
-/* Input */
-.auth-input {
-  width: 100%;
+.otp-change-btn:hover {
+  color: var(--brown-dark);
+}
+
+/* ── Change email inline ── */
+.otp-change-email-wrap {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.3s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Re-use auth-input from SignIn styles concept inline */
+.otp-email-input {
+  flex: 1;
   background: transparent;
   border: none;
   border-bottom: 1.5px solid var(--beige);
-  padding: 0.65rem 0;
+  padding: 0.55rem 0;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.975rem;
+  font-size: 0.9rem;
   color: var(--text-dark);
   outline: none;
   transition: border-color var(--transition);
 }
 
-.auth-input::placeholder {
+.otp-email-input:focus {
+  border-bottom-color: var(--brown);
+}
+
+.otp-email-input::placeholder {
   color: var(--text-soft);
   opacity: 0.6;
   font-style: italic;
 }
 
-.auth-input:focus {
-  border-bottom-color: var(--brown);
+.otp-change-email-save {
+  padding: 0.45rem 1rem;
+  background: var(--brown);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
 }
 
-.auth-input.error {
-  border-bottom-color: var(--error);
+.otp-change-email-save:hover {
+  background: var(--brown-dark);
 }
 
-/* animated underline bar */
-.auth-field::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--brown), var(--gold));
-  border-radius: 2px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+/* ── OTP input label ── */
+.otp-inputs-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  text-align: center;
+  margin-bottom: 0.85rem;
 }
 
-.auth-field:focus-within::after {
-  width: 100%;
+/* ── OTP 6-box row ── */
+.otp-inputs-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
 }
 
-/* Error message */
-.auth-error {
-  font-size: 0.75rem;
-  color: var(--error);
-  margin-top: -0.1rem;
+.otp-input-box {
+  width: 48px;
+  height: 54px;
+  border: 1.5px solid var(--beige);
+  border-radius: 12px;
+  background: var(--white);
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  outline: none;
+  caret-color: var(--brown);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform 0.15s ease,
+    background var(--transition);
 }
 
-/* Input with eye icon */
-.auth-input-wrap {
-  position: relative;
+.otp-input-box:focus {
+  border-color: var(--brown);
+  box-shadow: 0 0 0 3px rgba(124, 58, 45, 0.12);
+  transform: translateY(-2px);
+}
+
+.otp-input-box.filled {
+  border-color: var(--gold);
+  background: var(--cream-deep);
+  box-shadow: 0 2px 8px rgba(201, 169, 110, 0.2);
+}
+
+.otp-input-box.error {
+  border-color: var(--error);
+  background: #FDF0EE;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.otp-input-box.success {
+  border-color: var(--success);
+  background: #EEF8F4;
+  box-shadow: 0 0 0 3px rgba(46, 125, 94, 0.12);
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+/* ── Error / Success messages ── */
+.otp-error-msg {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--error);
+  margin-bottom: 0.75rem;
+  animation: fadeIn 0.3s ease both;
 }
 
-.auth-input-wrap .auth-input {
-  padding-right: 2rem;
+.otp-success-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--success);
+  margin-bottom: 0.75rem;
+  animation: fadeIn 0.3s ease both;
 }
 
-.auth-eye-btn {
-  position: absolute;
-  right: 0;
-  bottom: 0.6rem;
+/* ── Timer / Resend ── */
+.otp-timer-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.4rem;
+  min-height: 28px;
+}
+
+.otp-timer-text {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+.otp-timer-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brown);
+  font-style: normal;
+  margin-left: 0.25rem;
+}
+
+.otp-resend-btn {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-soft);
+  color: var(--brown);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
   padding: 0;
-  display: flex;
-  align-items: center;
   transition: color var(--transition);
+  animation: fadeIn 0.35s ease both;
 }
 
-.auth-eye-btn:hover {
-  color: var(--brown);
+.otp-resend-btn:hover {
+  color: var(--brown-dark);
 }
 
-/* Forgot password */
-.auth-forgot-wrap {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -0.5rem;
-}
-
-.auth-forgot {
-  font-size: 0.8rem;
-  color: var(--text-soft);
-  text-decoration: none;
-  font-style: italic;
-  transition: color var(--transition);
-}
-
-.auth-forgot:hover {
-  color: var(--brown);
-}
-
-/* ── Submit Button ── */
+/* ── Submit button (shared pattern from SignIn) ── */
 .auth-submit-btn {
   width: 100%;
   padding: 0.95rem;
@@ -434,9 +507,10 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: background var(--transition), transform 0.15s ease,
-    box-shadow var(--transition);
-  margin-top: 0.4rem;
+  transition: background var(--transition), transform 0.15s ease, box-shadow var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-submit-btn::before {
@@ -464,8 +538,12 @@
 }
 
 .auth-submit-btn:disabled {
-  opacity: 0.85;
+  opacity: 0.55;
   cursor: default;
+}
+
+.otp-verify-btn {
+  margin-top: 0;
 }
 
 /* Spinner */
@@ -480,66 +558,10 @@
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-/* ── Divider ── */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.5rem 0 1.2rem;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--beige);
-}
-
-.auth-divider span {
-  font-size: 0.75rem;
-  color: var(--text-soft);
-  white-space: nowrap;
-  font-style: italic;
-}
-
-/* ── Social Buttons ── */
-.auth-social-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-bottom: 1.75rem;
-}
-
-.auth-social-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.7rem;
-  background: var(--white);
-  border: 1.5px solid var(--beige);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-dark);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.auth-social-btn:hover {
-  border-color: var(--gold);
-  box-shadow: 0 4px 14px rgba(201, 169, 110, 0.2);
-  transform: translateY(-1px);
-}
-
-/* ── Switch link ── */
+/* Switch link */
 .auth-switch-text {
   text-align: center;
   font-size: 0.875rem;
@@ -582,7 +604,7 @@
   }
 
   .auth-illustration-wrap {
-    max-width: 280px;
+    max-width: 260px;
     animation: none;
   }
 
@@ -613,15 +635,22 @@
     padding: 1.5rem 1rem;
   }
 
-  .auth-title {
-    font-size: 1.65rem;
+  .otp-title {
+    font-size: 1.5rem;
   }
 
-  .auth-name-row {
-    grid-template-columns: 1fr;
+  .otp-input-box {
+    width: 42px;
+    height: 48px;
+    font-size: 1.2rem;
+    border-radius: 10px;
   }
 
-  .auth-name-row.visible {
-    max-height: 200px;
+  .otp-inputs-row {
+    gap: 0.45rem;
+  }
+
+  .otp-email-display {
+    font-size: 0.82rem;
   }
 }

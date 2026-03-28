@@ -9,6 +9,8 @@ const fileFilter = (req, file, cb) => {
     "image/png",
     "image/webp",
     "application/pdf",
+    "audio/webm",
+    "audio/ogg",
   ];
   if (allowed.includes(file.mimetype)) {
     cb(null, true);

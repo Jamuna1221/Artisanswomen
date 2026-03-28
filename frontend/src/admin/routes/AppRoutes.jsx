@@ -11,7 +11,7 @@ import CategoriesPage from '../pages/categories/CategoriesPage';
 import NotificationsPage from '../pages/notifications/NotificationsPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import ProfilePage from '../pages/profile/ProfilePage';
-import Home from '../../pages/Home/Home';
+import Home from '../../user/pages/Home/Home';
 
 // Remaining Placeholders
 const BuyersPage = () => <div>Buyers Management Page</div>;
