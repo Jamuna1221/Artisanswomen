@@ -18,7 +18,6 @@ const orderRoutes = require("./routes/orderRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
-const authRoutes = require("./routes/auth");
 const sellerProductRoutes = require("./routes/sellerProductRoutes");
 
 const notificationRoutes = require("./routes/notificationRoutes");
