@@ -15,6 +15,7 @@ const complaintRoutes = require("./routes/complaintRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const authRoutes = require("./routes/auth");
+const sellerProductRoutes = require("./routes/sellerProductRoutes");
 
 // Connect to Database
 connectDB();
@@ -36,6 +37,9 @@ app.get("/", (req, res) => {
 
 // Seller/Auth Routes (from teammate)
 app.use("/api/auth", authRoutes);
+
+// Seller Dashboard Routes
+app.use("/api/seller/products", sellerProductRoutes);
 
 // Admin Routes
 app.use("/api/admin/auth", adminAuthRoutes);
