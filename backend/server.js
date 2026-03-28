@@ -18,6 +18,8 @@ const orderRoutes = require("./routes/orderRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const authRoutes = require("./routes/auth");
+const sellerProductRoutes = require("./routes/sellerProductRoutes");
 
 const notificationRoutes = require("./routes/notificationRoutes");
 const sellerSettingsRoutes = require("./routes/sellerSettingsRoutes");
@@ -61,6 +63,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/seller/settings", sellerSettingsRoutes);
 app.use("/api/buyer", buyerRoutes);
 app.use("/api/community", communityChatRoutes);
+
+// Seller Dashboard Routes
+app.use("/api/seller/products", sellerProductRoutes);
 
 // Admin Routes
 app.use("/api/admin/auth", adminAuthRoutes);

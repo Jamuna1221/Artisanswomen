@@ -7,6 +7,7 @@ import SellerProtectedRoute from '../components/ProtectedRoute';
 import SellerLayout from '../components/layout/SellerLayout';
 import OverviewPage from '../pages/dashboard/OverviewPage';
 import ProductsPage from '../pages/products/ProductsPage';
+import ProductDetailPage from '../pages/products/ProductDetailPage';
 import OrdersPage from '../pages/orders/OrdersPage';
 import EarningsPage from '../pages/earnings/EarningsPage';
 import ReviewsPage from '../pages/reviews/ReviewsPage';
@@ -35,6 +36,7 @@ export default function SellerRoutes() {
         {/* Index → Overview */}
         <Route index element={<OverviewPage />} />
         <Route path="products" element={<ProductsPage />} />
+        <Route path="products/:id" element={<ProductDetailPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="earnings" element={<EarningsPage />} />
         <Route path="reviews" element={<ReviewsPage />} />
