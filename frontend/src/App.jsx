@@ -21,7 +21,7 @@ function App() {
           <Routes>
             {/* Admin routes (it uses absolute paths internally, so mounted at root wildcard) */}
             <Route path="/*" element={<AppRoutes />} />
-            
+
             {/* Seller routes (mounted under /seller/*) */}
             <Route path="/seller/*" element={<SellerRoutes />} />
 

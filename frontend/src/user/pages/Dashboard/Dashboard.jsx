@@ -1,372 +1,360 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import "./Dashboard.css";
 
-// ── Icons ──────────────────────────────────────────────────
-const Icons = {
-  orders: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <path d="M16 10a4 4 0 01-8 0" />
-    </svg>
-  ),
-  wishlist: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-    </svg>
-  ),
-  address: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  ),
-  profile: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  ),
-  contact: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-    </svg>
-  ),
-  logout: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  ),
-  chevron: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  ),
-  menu: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  ),
-  close: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  ),
-  sparkle: (
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-    </svg>
-  ),
+// ── Dummy Data ────────────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { id: 1, label: "For You", icon: "✨" },
+  { id: 2, label: "Fashion", icon: "👗" },
+  { id: 3, label: "Jewelry", icon: "💍" },
+  { id: 4, label: "Handmade", icon: "🧶" },
+  { id: 5, label: "Home Decor", icon: "🏺" },
+  { id: 6, label: "Crafts", icon: "🎨" },
+  { id: 7, label: "Textiles", icon: "🧵" },
+  { id: 8, label: "Pottery", icon: "🪔" },
+  { id: 9, label: "Paintings", icon: "🖼️" },
+  { id: 10, label: "Bags", icon: "👜" },
+  { id: 11, label: "Footwear", icon: "👡" },
+  { id: 12, label: "Wellness", icon: "🌿" },
+];
+
+const BANNERS = [
+  {
+    id: 1,
+    title: "Handcrafted with Love",
+    subtitle: "Discover exclusive pieces by India's finest women artisans",
+    cta: "Shop Now",
+    bg: "linear-gradient(135deg, #8b3a2b 0%, #c8a27c 60%, #f5e9dc 100%)",
+    accent: "#fff8f0",
+    img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&q=80",
+  },
+  {
+    id: 2,
+    title: "Festival Collection",
+    subtitle: "Celebrate with authentic ethnic wear & jewelry",
+    cta: "Explore",
+    bg: "linear-gradient(135deg, #3d1c0e 0%, #8b3a2b 55%, #c8a27c 100%)",
+    accent: "#fdf3e8",
+    img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=900&q=80",
+  },
+  {
+    id: 3,
+    title: "Home & Soul",
+    subtitle: "Transform your space with handmade decor",
+    cta: "Discover",
+    bg: "linear-gradient(135deg, #5a3020 0%, #a0622e 55%, #e8c89a 100%)",
+    accent: "#fff5ec",
+    img: "https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=900&q=80",
+  },
+];
+
+const FEATURED_PRODUCTS = [
+  { id: 1, name: "Block Print Kurta Set", price: 1299, mrp: 2199, rating: 4.5, reviews: 328, img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400&q=80", badge: "Bestseller" },
+  { id: 2, name: "Brass Oxidised Earrings", price: 499, mrp: 899, rating: 4.7, reviews: 512, img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80", badge: "New" },
+  { id: 3, name: "Handwoven Jute Tote", price: 799, mrp: 1299, rating: 4.3, reviews: 194, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80", badge: "" },
+  { id: 4, name: "Madhubani Art Cushion", price: 649, mrp: 999, rating: 4.6, reviews: 87, img: "https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=400&q=80", badge: "Artisan Pick" },
+  { id: 5, name: "Phulkari Dupatta", price: 1599, mrp: 2599, rating: 4.8, reviews: 421, img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=80", badge: "Trending" },
+  { id: 6, name: "Terracotta Diyas Set", price: 349, mrp: 599, rating: 4.4, reviews: 263, img: "https://images.unsplash.com/photo-1603899122634-f086ca5f5ddd?w=400&q=80", badge: "" },
+  { id: 7, name: "Kalamkari Saree", price: 2499, mrp: 3999, rating: 4.9, reviews: 178, img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400&q=80", badge: "Premium" },
+  { id: 8, name: "Hand-painted Pottery", price: 899, mrp: 1499, rating: 4.5, reviews: 305, img: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&q=80", badge: "" },
+];
+
+const RECOMMENDED = [
+  { id: 9, name: "Warli Art Frame", price: 749, mrp: 1299, rating: 4.4, img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&q=80" },
+  { id: 10, name: "Handmade Leather Wallet", price: 599, mrp: 999, rating: 4.6, img: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80" },
+  { id: 11, name: "Beaded Kolhapuri Heels", price: 1199, mrp: 1899, rating: 4.3, img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80" },
+  { id: 12, name: "Embroidered Clutch", price: 849, mrp: 1399, rating: 4.7, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80" },
+  { id: 13, name: "Ajrakh Print Stole", price: 699, mrp: 1199, rating: 4.5, img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=80" },
+];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const discount = (price, mrp) => Math.round(((mrp - price) / mrp) * 100);
+
+const StarRating = ({ rating }) => {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  return (
+    <span className="stars">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span key={i} className={i < full ? "star filled" : i === full && half ? "star half" : "star"}>★</span>
+      ))}
+    </span>
+  );
 };
 
-// ── Nav items ───────────────────────────────────────────────
-const NAV_ITEMS = [
-  { id: "orders", label: "My Orders & Returns", icon: Icons.orders },
-  { id: "wishlist", label: "Wishlist", icon: Icons.wishlist },
-  { id: "address", label: "Address Book", icon: Icons.address },
-  { id: "profile", label: "My Profile", icon: Icons.profile },
-  { id: "contact", label: "Contact Us", icon: Icons.contact },
-];
+// ── Sub-components ────────────────────────────────────────────────────────────
+function Header({ user, cartCount }) {
+  const [search, setSearch] = useState("");
+  const [dropdown, setDropdown] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-// ── Dashboard cards ────────────────────────────────────────
-const CARDS = [
-  {
-    id: "orders",
-    icon: Icons.orders,
-    title: "My Orders & Returns",
-    subtitle: "Track your orders, request returns, or reorder favourites",
-    accent: "#7C3A2D",
-    badge: null,
-  },
-  {
-    id: "wishlist",
-    icon: Icons.wishlist,
-    title: "My Wishlist",
-    subtitle: "Save and revisit pieces that caught your eye",
-    accent: "#A07850",
-    badge: null,
-  },
-  {
-    id: "address",
-    icon: Icons.address,
-    title: "Address Book",
-    subtitle: "Manage delivery addresses for a seamless checkout",
-    accent: "#C9A96E",
-    badge: null,
-  },
-  {
-    id: "profile",
-    icon: Icons.profile,
-    title: "My Profile",
-    subtitle: "Update your personal details and preferences",
-    accent: "#7C3A2D",
-    badge: null,
-  },
-  {
-    id: "contact",
-    icon: Icons.contact,
-    title: "Contact Us",
-    subtitle: "Reach our artisan concierge team anytime",
-    accent: "#A07850",
-    badge: null,
-  },
-];
-
-
-export default function Account() {
-  const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("overview");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState(null);
-
-  // ── PART 4: Protected Route Logic ───────────────────────
   useEffect(() => {
-    const token = localStorage.getItem("token") || localStorage.getItem("buyerToken");
-    if (!token) {
-      console.log("No token found, redirecting to /signin"); // Debugging check
-      navigate("/signin", { replace: true });
-      return;
-    }
-
-    // PART 3: Get user from localStorage
-    try {
-      const storedUser = localStorage.getItem("user");
-      console.log("Stored user in Dashboard:", storedUser); // Debugging check
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      } else {
-        // Fallback if no user in localStorage but token exists
-        setUser({ name: "Guest" });
-      }
-    } catch (error) {
-      console.error("Error parsing user from localStorage", error);
-      setUser({ name: "Guest" });
-    }
-  }, [navigate]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("buyerToken");
-    localStorage.removeItem("user");
-    navigate("/signin");
-  };
-
-  console.log("User:", user);
-
-  if (!user) {
-    return <p>Loading...</p>;
-  }
-
-  // Derive display values from live user data
-  // PART 3: Display first letter and Fallback to "Guest"
-  const displayName = user?.name || "Guest";
-  const initials = displayName.charAt(0).toUpperCase();
-  const firstName = displayName.split(" ")[0] || "Guest";
-
-  const handleNav = (id) => {
-    setActiveSection(id);
-    setSidebarOpen(false);
-  };
-
-  // ── Dynamic badge helper ─────────────
-  const getBadge = (id) => {
-    if (id === "orders") return user?.ordersCount > 0 ? `${user.ordersCount} Active` : null;
-    if (id === "wishlist") return user?.wishlistCount > 0 ? `${user.wishlistCount} Items` : null;
-    return null;
-  };
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <div className="acc-root">
-      {/* ── Mobile overlay ── */}
-      {sidebarOpen && (
-        <div className="acc-overlay" onClick={() => setSidebarOpen(false)} />
-      )}
+    <header className={`header${scrolled ? " header--scrolled" : ""}`}>
+      <div className="header__inner">
+        {/* Logo */}
+        <div className="header__logo">
+          <span className="logo-icon">♡</span>
+          <div className="logo-text">
+            <span className="logo-brand">Handora</span>
+            <span className="logo-tagline">by artisans</span>
+          </div>
+        </div>
 
-      {/* ── Mobile topbar ── */}
-      <div className="acc-mobile-bar">
-        <button className="acc-mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
-          {Icons.menu}
-        </button>
-        <span className="acc-mobile-logo">✦ Handora</span>
+        {/* Search */}
+        <div className="header__search">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search for sarees, jewelry, pottery…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button className="search-btn">Search</button>
+        </div>
+
+        {/* Right */}
+        <div className="header__right">
+          <div className="header__user" onClick={() => setDropdown((d) => !d)}>
+            <div className="user-avatar">{user?.name?.[0]?.toUpperCase() || "U"}</div>
+            <div className="user-info">
+              <span className="user-greeting">Hello,</span>
+              <span className="user-name">{user?.name?.split(" ")[0] || "Guest"} ▾</span>
+            </div>
+            {dropdown && (
+              <div className="user-dropdown">
+                <a href="/account">My Account</a>
+                <a href="/orders">My Orders</a>
+                <a href="/wishlist">Wishlist</a>
+                <hr />
+                <a href="/logout" className="logout-link">Logout</a>
+              </div>
+            )}
+          </div>
+
+          <a href="/cart" className="header__cart">
+            <span className="cart-icon">🛒</span>
+            <span className="cart-label">Cart</span>
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function CategoryBar({ active, onSelect }) {
+  return (
+    <nav className="category-bar">
+      <div className="category-bar__inner">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat.id}
+            className={`category-item${active === cat.id ? " category-item--active" : ""}`}
+            onClick={() => onSelect(cat.id)}
+          >
+            <span className="category-icon">{cat.icon}</span>
+            <span className="category-label">{cat.label}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+function HeroBanner() {
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef(null);
+
+  const goTo = (i) => {
+    setCurrent((i + BANNERS.length) % BANNERS.length);
+  };
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => goTo(current + 1), 4500);
+    return () => clearInterval(timerRef.current);
+  }, [current]);
+
+  const banner = BANNERS[current];
+
+  return (
+    <section className="hero-banner">
+      <div className="hero-banner__slide" style={{ background: banner.bg }}>
+        <div className="hero-banner__content">
+          <p className="hero-eyebrow">✦ New Arrivals</p>
+          <h2 className="hero-title">{banner.title}</h2>
+          <p className="hero-subtitle">{banner.subtitle}</p>
+          <button className="hero-cta">{banner.cta} →</button>
+        </div>
+        <div className="hero-banner__image">
+          <img src={banner.img} alt={banner.title} />
+        </div>
       </div>
 
-      {/* ══════════ SIDEBAR ══════════ */}
-      <aside className={`acc-sidebar ${sidebarOpen ? "open" : ""}`}>
-        {/* Close button (mobile) */}
-        <button className="acc-sidebar-close" onClick={() => setSidebarOpen(false)}>
-          {Icons.close}
-        </button>
-
-        {/* User avatar block */}
-        <div className="acc-user-block">
-          <div className="acc-avatar">
-            <span>{initials}</span>
-            <span className="acc-avatar-ring" />
-          </div>
-          <div className="acc-user-info">
-            <p className="acc-user-name">{displayName}</p>
-            <p className="acc-user-email">{user?.email || ""}</p>
-          </div>
-        </div>
-
-        {/* Divider */}
-        <div className="acc-sidebar-divider">
-          <span>My Account</span>
-        </div>
-
-        {/* Nav */}
-        <nav className="acc-nav">
+      {/* Dots */}
+      <div className="hero-dots">
+        {BANNERS.map((_, i) => (
           <button
-            className={`acc-nav-item ${activeSection === "overview" ? "active" : ""}`}
-            onClick={() => handleNav("overview")}
-          >
-            <span className="acc-nav-icon">{Icons.sparkle}</span>
-            <span className="acc-nav-label">Overview</span>
-            <span className="acc-nav-arrow">{Icons.chevron}</span>
-          </button>
-
-          {NAV_ITEMS.map(item => (
-            <button
-              key={item.id}
-              className={`acc-nav-item ${activeSection === item.id ? "active" : ""}`}
-              onClick={() => handleNav(item.id)}
-            >
-              <span className="acc-nav-icon">{item.icon}</span>
-              <span className="acc-nav-label">{item.label}</span>
-              <span className="acc-nav-arrow">{Icons.chevron}</span>
-            </button>
-          ))}
-        </nav>
-
-        {/* Logout */}
-        <button className="acc-logout-btn" onClick={handleLogout}>
-          <span className="acc-nav-icon">{Icons.logout}</span>
-          <span>Logout</span>
-        </button>
-      </aside>
-
-      {/* ══════════ MAIN CONTENT ══════════ */}
-      <main className="acc-main">
-        {/* Page header */}
-        <div className="acc-page-header">
-          <div className="acc-page-header-text">
-            <p className="acc-greeting">Good to see you, {firstName}</p>
-            <h1 className="acc-page-title">My Account</h1>
-          </div>
-          <div className="acc-header-ornament">✦</div>
-        </div>
-
-        {/* Breadcrumb */}
-        <div className="acc-breadcrumb">
-          <span>Home</span>
-          <span className="acc-bc-sep">›</span>
-          <span className="acc-bc-active">My Account</span>
-        </div>
-
-        {/* ── Overview (default) ── */}
-        {activeSection === "overview" && (
-          <div className="acc-overview">
-            {/* Summary strip */}
-            <div className="acc-stats-strip">
-              <div className="acc-stat">
-                <span className="acc-stat-num">{user?.ordersCount || 0}</span>
-                <span className="acc-stat-label">Active Orders</span>
-              </div>
-              <div className="acc-stat-divider" />
-              <div className="acc-stat">
-                <span className="acc-stat-num">{user?.wishlistCount || 0}</span>
-                <span className="acc-stat-label">Wishlist Items</span>
-              </div>
-              <div className="acc-stat-divider" />
-              <div className="acc-stat">
-                <span className="acc-stat-num">—</span>
-                <span className="acc-stat-label">Saved Addresses</span>
-              </div>
-            </div>
-
-            {/* Cards grid */}
-            <div className="acc-cards-grid">
-              {CARDS.map((card, i) => (
-                <button
-                  key={card.id}
-                  className="acc-card"
-                  style={{ "--card-accent": card.accent, animationDelay: `${i * 0.08}s` }}
-                  onClick={() => handleNav(card.id)}
-                >
-                  {/* Decorative top bar */}
-                  <span className="acc-card-bar" />
-
-                  {/* Icon circle */}
-                  <span className="acc-card-icon-wrap">
-                    {card.icon}
-                  </span>
-
-                  {/* Badge — derived from live profile counts */}
-                  {getBadge(card.id) && (
-                    <span className="acc-card-badge">{getBadge(card.id)}</span>
-                  )}
-
-                  {/* Text */}
-                  <h3 className="acc-card-title">{card.title}</h3>
-                  <p className="acc-card-sub">{card.subtitle}</p>
-
-                  {/* Arrow */}
-                  <span className="acc-card-arrow">{Icons.chevron}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── Section placeholder views ── */}
-        {activeSection !== "overview" && (
-          <SectionPlaceholder
-            id={activeSection}
-            nav={NAV_ITEMS.find(n => n.id === activeSection)}
-            onBack={() => setActiveSection("overview")}
+            key={i}
+            className={`hero-dot${i === current ? " hero-dot--active" : ""}`}
+            onClick={() => goTo(i)}
           />
-        )}
-      </main>
+        ))}
+      </div>
+
+      {/* Arrows */}
+      <button className="hero-arrow hero-arrow--prev" onClick={() => goTo(current - 1)}>‹</button>
+      <button className="hero-arrow hero-arrow--next" onClick={() => goTo(current + 1)}>›</button>
+    </section>
+  );
+}
+
+function ProductCard({ product }) {
+  const [wishlisted, setWishlisted] = useState(false);
+  const off = discount(product.price, product.mrp);
+
+  return (
+    <div className="product-card">
+      <div className="product-card__image-wrap">
+        <img src={product.img} alt={product.name} className="product-card__image" />
+        {product.badge && <span className="product-badge">{product.badge}</span>}
+        <button
+          className={`wishlist-btn${wishlisted ? " wishlisted" : ""}`}
+          onClick={() => setWishlisted((w) => !w)}
+          title="Wishlist"
+        >
+          {wishlisted ? "♥" : "♡"}
+        </button>
+      </div>
+      <div className="product-card__body">
+        <p className="product-name">{product.name}</p>
+        <div className="product-rating">
+          <StarRating rating={product.rating} />
+          <span className="rating-val">{product.rating}</span>
+          {product.reviews && <span className="rating-count">({product.reviews})</span>}
+        </div>
+        <div className="product-pricing">
+          <span className="price">₹{product.price.toLocaleString()}</span>
+          <span className="mrp">₹{product.mrp.toLocaleString()}</span>
+          <span className="off">{off}% off</span>
+        </div>
+      </div>
     </div>
   );
 }
 
-// ── Placeholder for section pages ──────────────────────────
-function SectionPlaceholder({ id, nav, onBack }) {
-  const msgs = {
-    orders: { sub: "Your order history and return requests will appear here.", empty: "No orders yet — start exploring artisan collections." },
-    wishlist: { sub: "All your saved pieces in one place.", empty: "Your wishlist is empty — save items you love." },
-    address: { sub: "Manage your delivery addresses.", empty: "No addresses saved yet." },
-    profile: { sub: "Your personal details and account preferences.", empty: "" },
-    contact: { sub: "Reach our team — we're here to help.", empty: "" },
-  };
-  const info = msgs[id] || {};
+function ProductGrid({ title, products, cols }) {
+  return (
+    <section className="product-section">
+      <div className="section-header">
+        <h2 className="section-title">{title}</h2>
+        <a href="/products" className="see-all">See All →</a>
+      </div>
+      <div className={`product-grid product-grid--${cols || 4}`}>
+        {products.map((p) => <ProductCard key={p.id} product={p} />)}
+      </div>
+    </section>
+  );
+}
+
+function PersonalisedSection({ user }) {
+  return (
+    <section className="personalised-section">
+      <div className="personalised-header">
+        <div>
+          <p className="personalised-eyebrow">✦ Curated just for you</p>
+          <h2 className="personalised-title">
+            Hi {user?.name?.split(" ")[0] || "there"}, recommended for you
+          </h2>
+        </div>
+        <a href="/products" className="see-all">Browse All →</a>
+      </div>
+      <div className="personalised-scroll">
+        {RECOMMENDED.map((p) => <ProductCard key={p.id} product={p} />)}
+      </div>
+    </section>
+  );
+}
+
+function BannerStrip() {
+  return (
+    <div className="banner-strip">
+      {[
+        { icon: "🚚", label: "Free Delivery", sub: "On orders above ₹499" },
+        { icon: "🔄", label: "Easy Returns", sub: "7-day hassle-free returns" },
+        { icon: "🔒", label: "Secure Payments", sub: "100% safe & encrypted" },
+        { icon: "🤝", label: "Artisan Support", sub: "Every buy empowers women" },
+      ].map((item) => (
+        <div className="strip-item" key={item.label}>
+          <span className="strip-icon">{item.icon}</span>
+          <div>
+            <p className="strip-label">{item.label}</p>
+            <p className="strip-sub">{item.sub}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
+export default function Home() {
+  const [user, setUser] = useState(null);
+  const [activeCategory, setActive] = useState(1);
+  const cartCount = 3; // replace with real cart state
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try { setUser(JSON.parse(stored)); }
+      catch { setUser({ name: "Harini Manikandan" }); }
+    } else {
+      setUser({ name: "Harini Manikandan" }); // fallback for demo
+    }
+    // Google Fonts
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600;700&display=swap";
+    document.head.appendChild(link);
+  }, []);
 
   return (
-    <div className="acc-section-view">
-      <button className="acc-back-btn" onClick={onBack}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><polyline points="15 18 9 12 15 6" /></svg>
-        Back to overview
-      </button>
+    <div className="home-page">
+      <Header user={user} cartCount={cartCount} />
+      <CategoryBar active={activeCategory} onSelect={setActive} />
+      <main className="home-main">
+        <HeroBanner />
+        <BannerStrip />
+        <ProductGrid title="✦ Featured Artisan Picks" products={FEATURED_PRODUCTS} cols={4} />
+        <PersonalisedSection user={user} />
+      </main>
 
-      <div className="acc-section-header">
-        <span className="acc-section-icon">{nav?.icon}</span>
-        <div>
-          <h2 className="acc-section-title">{nav?.label}</h2>
-          <p className="acc-section-sub">{info.sub}</p>
+      <footer className="home-footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <span className="logo-icon">♡</span>
+            <span className="footer-brand-name">Handora</span>
+            <p>Empowering women artisans across India</p>
+          </div>
+          <div className="footer-links">
+            <h4>Shop</h4>
+            <a href="#">Fashion</a><a href="#">Jewelry</a><a href="#">Home Decor</a>
+          </div>
+          <div className="footer-links">
+            <h4>Help</h4>
+            <a href="#">Contact Us</a><a href="#">Track Order</a><a href="#">Returns</a>
+          </div>
+          <div className="footer-links">
+            <h4>Company</h4>
+            <a href="#">About</a><a href="#">Artisans</a><a href="#">Blog</a>
+          </div>
         </div>
-      </div>
-
-      <div className="acc-section-empty">
-        <div className="acc-empty-ornament">✦</div>
-        <p>{info.empty || "This section is coming soon."}</p>
-        <button className="acc-explore-btn" onClick={onBack}>
-          Explore Collections
-        </button>
-      </div>
+        <div className="footer-bottom">© 2026 Handora. Made with ♥ for women artisans.</div>
+      </footer>
     </div>
   );
 }

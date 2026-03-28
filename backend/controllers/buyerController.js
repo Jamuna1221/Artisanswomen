@@ -14,36 +14,33 @@ const loginBuyer = async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // Check for user email inside buyers collection
     const user = await Buyer.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(404).json({ message: 'Email not registered' });
     }
 
     if (!user.password) {
-       return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if (isMatch) {
-      const token = generateToken(user._id, '30d');
-      
-      res.json({
-        success: true,
-        message: 'Login successful',
-        user: {
-          _id: user._id, // User ID mapped correctly
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-        token,
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Incorrect password' });
     }
+
+    const token = generateToken(user._id, '30d');
+
+    return res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error('Buyer login error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
