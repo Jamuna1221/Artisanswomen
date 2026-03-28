@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getOrders, updateOrderStatus } from '../../services/orderService';
+import { getOrders } from '../../services/orderService';
 import Table from '../../components/ui/Table';
 import { Eye, Check } from 'lucide-react';
 

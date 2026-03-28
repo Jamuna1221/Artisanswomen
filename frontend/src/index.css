@@ -2,16 +2,21 @@
 
 :root {
   /* Handora Premium Color Palette */
-  --primary: #C05641;      /* Terracotta / Clay */
-  --secondary: #E9C46A;    /* Muted Gold / Mustard */
-  --accent: #2A9D8F;       /* Teal / Sage Green */
-  --bg-warm: #FDFBF7;      /* Warm Off-White */
+  --primary: #C05641;
+  /* Terracotta / Clay */
+  --secondary: #E9C46A;
+  /* Muted Gold / Mustard */
+  --accent: #2A9D8F;
+  /* Teal / Sage Green */
+  --bg-warm: #FDFBF7;
+  /* Warm Off-White */
   --card-white: #ffffff;
-  --text-charcoal: #264653; /* Charcoal */
+  --text-charcoal: #264653;
+  /* Charcoal */
   --text-muted: #666666;
   --border-light: #f0f0f0;
   --transition-fast: 0.2s ease;
-  
+
   font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--text-charcoal);
   background-color: var(--bg-warm);
@@ -23,7 +28,9 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   width: 100%;
   min-height: 100vh;
   margin: 0;
@@ -31,7 +38,11 @@ html, body, #root {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .brand-name {
+h1,
+h2,
+h3,
+h4,
+.brand-name {
   font-family: 'Playfair Display', serif;
 }
 
@@ -46,7 +57,8 @@ h1, h2, h3, h4, .brand-name {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 280px; /* Reverted to "usual" width of 280px */
+  margin-left: 280px;
+  /* Reverted to "usual" width of 280px */
   min-height: 100vh;
   transition: var(--transition-fast);
 }
@@ -99,9 +111,20 @@ h1, h2, h3, h4, .brand-name {
   letter-spacing: 0.5px;
 }
 
-.status-pill.pending { background: #FFF4E5; color: #D97706; }
-.status-pill.verified { background: #E6F4F1; color: #059669; }
-.status-pill.rejected { background: #FFF0F0; color: #DC2626; }
+.status-pill.pending {
+  background: #FFF4E5;
+  color: #D97706;
+}
+
+.status-pill.verified {
+  background: #E6F4F1;
+  color: #059669;
+}
+
+.status-pill.rejected {
+  background: #FFF0F0;
+  color: #DC2626;
+}
 
 /* Table Styles */
 .h-table-container {
@@ -132,8 +155,15 @@ h1, h2, h3, h4, .brand-name {
 
 /* Global Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .fade-in {
@@ -141,10 +171,25 @@ h1, h2, h3, h4, .brand-name {
 }
 
 /* Utilities */
-.text-muted { color: var(--text-muted); }
-.text-primary { color: var(--primary); }
-.flex-between { display: flex; justify-content: space-between; align-items: center; }
-.flex-center { display: flex; justify-content: center; align-items: center; }
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 @media (max-width: 1024px) {
   .admin-content {

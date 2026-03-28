@@ -1,10 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
-// Route Imports
+const authRoutes = require("./routes/auth");
+const buyerRoutes = require("./routes/buyerRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const verificationRoutes = require("./routes/verificationRoutes");
@@ -14,28 +16,43 @@ const orderRoutes = require("./routes/orderRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
-const authRoutes = require("./routes/auth");
 
-// Connect to Database
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
-  credentials: true,
-}));
+// CORS Middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Handle preflight OPTIONS for all routes (Express v5 compatible wildcard)
+app.options("/*splat", cors());
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Routes
+// Health check
 app.get("/", (req, res) => {
-  res.send("MarketLink API is running 🚀");
+  res.send("ArtisansWomen API is running 🚀");
 });
 
-// Seller/Auth Routes (from teammate)
+// Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/buyer", buyerRoutes);
 
 // Admin Routes
 app.use("/api/admin/auth", adminAuthRoutes);
@@ -55,12 +72,12 @@ app.post("/api/admin/simulate/seller-registration", simulationController.simulat
 app.post("/api/admin/simulate/new-product", simulationController.simulateNewProduct);
 app.post("/api/admin/simulate/new-complaint", simulationController.simulateNewComplaint);
 
-// Error Handling Middleware
+// Error Handling Middleware (must be LAST)
 app.use(notFound);
 app.use(errorHandler);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  console.log(`Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
 });

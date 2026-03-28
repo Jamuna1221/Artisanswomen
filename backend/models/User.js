@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String }, // set during registration
     age: { type: Number },
-    gender: { type: String, enum: ["Women", "Transwomen"] },
+    gender: { type: String, enum: ["Women", "Transwomen", "Woman", "Transwoman"] },
     aadhaarNumber: { type: String },
     phone: { type: String },
 
