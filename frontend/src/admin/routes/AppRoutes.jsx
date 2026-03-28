@@ -11,11 +11,11 @@ import CategoriesPage from '../pages/categories/CategoriesPage';
 import NotificationsPage from '../pages/notifications/NotificationsPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import ProfilePage from '../pages/profile/ProfilePage';
+import ComplaintsPage from '../pages/complaints/ComplaintsPage';
 import Home from '../../user/pages/Home/Home';
 
 // Remaining Placeholders
 const BuyersPage = () => <div>Buyers Management Page</div>;
-const ComplaintsPage = () => <div>Complaints Page</div>;
 const AnalyticsPage = () => <div>Analytics Page</div>;
 const NotFound = () => <div style={{padding: 50, textAlign: 'center'}}><h1>404</h1><p>Handora Page Not Found</p></div>;
 

@@ -5,7 +5,6 @@ import Categories from '../../components/Categories/Categories'
 import FeaturedProducts from '../../components/FeaturedProducts/FeaturedProducts'
 import ArtisanStory from '../../components/ArtisanStory/ArtisanStory'
 import WhyChooseUs from '../../components/WhyChooseUs/WhyChooseUs'
-import Footer from '../../components/Footer/Footer'
 
 export default function Home() {
   return (
@@ -16,7 +15,6 @@ export default function Home() {
       <FeaturedProducts />
       <ArtisanStory />
       <WhyChooseUs />
-      <Footer />
     </div>
   )
 }

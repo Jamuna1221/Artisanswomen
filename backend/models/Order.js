@@ -31,6 +31,7 @@ const orderSchema = new mongoose.Schema(
       pincode: String,
       phone: String,
     },
+    estimatedDeliveryDate: { type: Date },
     paymentMethod: { type: String, default: "COD" },
   },
   { timestamps: true }

@@ -1,7 +1,9 @@
 const SellerSettings = require('../models/SellerSettings');
-const SupportTicket = require('../models/SupportTicket');
+const Complaint = require('../models/Complaint');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+
+const { sendSupportEmail } = require('../utils/sendEmail');
 
 const getOrCreateSettings = async (sellerId, user) => {
     let settings = await SellerSettings.findOne({ sellerId });
@@ -150,14 +152,19 @@ exports.submitSupportTicket = async (req, res) => {
         if (!subject || !category || !message) {
             return res.status(400).json({ message: 'Please provide all support ticket fields' });
         }
-        const ticket = await SupportTicket.create({
-            sellerId: req.user._id,
-            sellerName: req.user.name,
-            email: req.user.email,
-            subject,
-            category,
-            message
+        const ticket = await Complaint.create({
+            userId: req.user._id,
+            subject: `[${category}] ${subject}`,
+            message: message
         });
+
+        // Send support email to admin and auto-response to the artisan
+        try {
+            await sendSupportEmail(req.user.name, req.user.email, subject, category, message);
+        } catch (emailErr) {
+            console.error('Failed to send support email:', emailErr);
+        }
+
         res.json({ message: 'Support ticket submitted successfully', ticket });
     } catch (error) {
         res.status(500).json({ message: 'Error submitting support ticket', error: error.message });

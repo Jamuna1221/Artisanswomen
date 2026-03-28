@@ -23,6 +23,7 @@ const sellerProductRoutes = require("./routes/sellerProductRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const sellerSettingsRoutes = require("./routes/sellerSettingsRoutes");
 const communityChatRoutes = require("./routes/communityChatRoutes");
+const helpRoutes = require("./routes/helpRoutes");
 
 // Connect to MongoDB
 connectDB();
@@ -61,7 +62,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/seller/settings", sellerSettingsRoutes);
 app.use("/api/buyer", buyerRoutes);
-app.use("/api/community", communityChatRoutes);
+app.use("/api/community/groups", communityChatRoutes);
+app.use("/api/help", helpRoutes);
 
 // Seller Dashboard Routes
 app.use("/api/seller/products", sellerProductRoutes);
