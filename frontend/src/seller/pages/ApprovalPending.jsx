@@ -45,10 +45,8 @@ export default function ApprovalPending() {
       setStatus(verificationStatus);
       setUserData({ name, email, verificationStatus, createdAt });
       setRejectionReason(reason || '');
-      
       login(localStorage.getItem('authToken'), { name, email, verificationStatus });
       setLastChecked(new Date());
-      
       if (verificationStatus === 'Approved') {
         setTimeout(() => navigate('/seller/dashboard'), 1500);
       }
@@ -59,23 +57,30 @@ export default function ApprovalPending() {
     }
   };
 
-  useEffect(() => {
-    fetchStatus();
-  }, []);
+  useEffect(() => { fetchStatus(); }, []);
 
   const cfg = statusConfig[status] || statusConfig.Pending;
 
   return (
-    <div className="seller-page">
-      <div style={{ width: '100%', maxWidth: '520px' }}>
-        
-        {/* Brand */}
+      <div style={{
+    minHeight: '100vh',
+    background: 'var(--cream)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '2rem 1rem'
+  }}>
+
+    <div className="seller-page" style={{ background: 'var(--cream)' }}>
+      <div style={{ width: '100%', maxWidth: '520px', padding: '2rem 1rem' }}>
+
         <div className="seller-brand">
           <div className="seller-brand-icon">🧵</div>
-          <h1 className="seller-brand-title" style={{ fontSize: '1.5rem' }}>MarketLink for Women Artisans</h1>
+          <h1 className="seller-brand-title">Handora</h1>
+          <p className="seller-brand-sub">Hand Made Haven</p>
         </div>
-
-        {/* Status Card */}
+      
         <div className="pending-card">
           <div className={`pending-banner ${cfg.pillClass}`}>
             <div className="pending-icon">{cfg.icon}</div>
@@ -84,7 +89,6 @@ export default function ApprovalPending() {
           </div>
 
           <div className="pending-body">
-            
             {userData.name && (
               <div className="pending-user-box">
                 <div className="pending-user-name">{userData.name}</div>
@@ -114,7 +118,7 @@ export default function ApprovalPending() {
 
             {status === 'Pending' && (
               <div className="pending-steps">
-                {['Registration submitted', 'Admin review in progress', 'Email notification sent on approval', 'Seller dashboard unlocked'].map((step, i) => (
+                {['Registration submitted', 'Admin review in progress', 'Email notification on approval', 'Seller dashboard unlocked'].map((step, i) => (
                   <div key={i} className="pending-step">
                     <div className={`pending-step-dot ${i === 0 ? 'done' : i === 1 ? 'current' : 'future'}`}>
                       {i === 0 ? '✓' : i + 1}
@@ -141,7 +145,7 @@ export default function ApprovalPending() {
                   {checking ? <><span className="spinner dark" /> Checking status…</> : '↻ Refresh Status'}
                 </button>
               )}
-              
+
               <button onClick={() => { logout(); navigate('/seller/login'); }} className="seller-btn-ghost">
                 ← Logout
               </button>
@@ -152,10 +156,9 @@ export default function ApprovalPending() {
                 Last checked: {lastChecked.toLocaleTimeString('en-IN')}
               </div>
             )}
-
           </div>
         </div>
-
+        </div>
       </div>
     </div>
   );

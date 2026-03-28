@@ -118,10 +118,10 @@ export default function SellerRegister() {
         headers: { Authorization: `Bearer ${tempToken}` },
       });
 
-      login(res.data.authToken, { 
-        name: res.data.name, 
-        email: res.data.email, 
-        verificationStatus: res.data.verificationStatus 
+      login(res.data.authToken, {
+        name: res.data.name,
+        email: res.data.email,
+        verificationStatus: res.data.verificationStatus,
       });
 
       localStorage.removeItem('tempToken');
@@ -138,14 +138,14 @@ export default function SellerRegister() {
 
   const FileUploadBox = ({ label, accept, file, onChange, required }) => (
     <div style={{ marginBottom: '1.25rem' }}>
-      <label className="seller-label" style={{ display: 'block', marginBottom: '0.4rem' }}>
+      <label className="seller-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
         {label} {required && <span className="req">*</span>}
       </label>
       <label className="seller-file-label">
         <input type="file" accept={accept} onChange={(e) => onChange(e.target.files[0])} />
         {file ? (
           <>
-            <div className="seller-file-icon" style={{ color: '#1a5c38' }}>✓</div>
+            <div className="seller-file-icon" style={{ color: 'var(--teal)' }}>✓</div>
             <div className="seller-file-hint success">{file.name}</div>
             <div className="seller-file-name" style={{ marginTop: '0.2rem' }}>Click to change</div>
           </>
@@ -153,7 +153,7 @@ export default function SellerRegister() {
           <>
             <div className="seller-file-icon">📁</div>
             <div className="seller-file-hint">Click or drag to upload</div>
-            <div className="seller-file-name">JPEG, PNG, PDF (Max 5MB)</div>
+            <div className="seller-file-name">JPEG, PNG, PDF — max 5 MB</div>
           </>
         )}
       </label>
@@ -163,39 +163,43 @@ export default function SellerRegister() {
   return (
     <div className="seller-page-scroll">
       <div className="seller-form-wrap">
-        
-        <div className="seller-brand">
-          <div className="seller-brand-icon">🧵</div>
-          <h1 className="seller-brand-title">Artisan Registration</h1>
-          <p className="seller-brand-sub">Complete your profile to start selling on MarketLink</p>
+
+        {/* ── Header banner ── */}
+        <div className="seller-form-header">
+          <div className="seller-form-header-bg">🧵</div>
+          <div className="seller-form-header-pill">✦ Artisan Registration</div>
+          <h1 className="seller-form-header-title">Complete Your Profile</h1>
+          <p className="seller-form-header-sub">
+            Fill in your details to start selling on Handora. Your application will be reviewed by our team.
+          </p>
         </div>
 
-        {error && <div className="seller-alert error">⚠ {error}</div>}
+        {error && <div className="seller-alert error" style={{ marginBottom: '1rem' }}>⚠ {error}</div>}
 
         <form onSubmit={handleSubmit}>
-          
-          {/* Section 1 */}
+
+          {/* 1 · Personal Information */}
           <div className="seller-section-card">
             <h2 className="seller-section-title">
               <span className="seller-section-num">1</span> Personal Information
             </h2>
             <div className="seller-grid seller-grid-2">
-              <InputField 
-                label="Full Name" icon="👤" required 
-                value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} 
+              <InputField
+                label="Full Name" icon="👤" required
+                value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
-              <InputField 
-                label="Email Address" icon="✉" required readOnly 
-                value={form.email} 
+              <InputField
+                label="Email Address" icon="✉" required readOnly
+                value={form.email}
               />
-              <InputField 
-                label="Age" icon="#" type="number" min="18" required 
-                value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })} 
+              <InputField
+                label="Age" icon="#" type="number" min="18" required
+                value={form.age} onChange={(e) => setForm({ ...form, age: e.target.value })}
               />
               <div className="seller-field">
                 <label className="seller-label">Gender <span className="req">*</span></label>
-                <select 
-                  required className="seller-select" 
+                <select
+                  required className="seller-select"
                   value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}
                 >
                   <option value="">Select gender</option>
@@ -203,43 +207,46 @@ export default function SellerRegister() {
                   <option value="Transwomen">Transwomen</option>
                 </select>
               </div>
-              <InputField 
-                label="Aadhaar Number" icon="🆔" required maxLength={12} 
-                value={form.aadhaarNumber} 
-                onChange={(e) => setForm({ ...form, aadhaarNumber: e.target.value.replace(/\D/g, '').slice(0, 12) })} 
+              <InputField
+                label="Aadhaar Number" icon="🆔" required maxLength={12}
+                value={form.aadhaarNumber}
+                onChange={(e) => setForm({ ...form, aadhaarNumber: e.target.value.replace(/\D/g, '').slice(0, 12) })}
               />
-              <InputField 
-                label="Phone Number" icon="📞" required type="tel" 
-                value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} 
+              <InputField
+                label="Phone Number" icon="📞" required type="tel"
+                value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
             </div>
           </div>
 
-          {/* Section 2 */}
+          {/* 2 · Set Password */}
           <div className="seller-section-card">
             <h2 className="seller-section-title">
               <span className="seller-section-num">2</span> Set Password
             </h2>
             <div className="seller-grid seller-grid-2">
-              <InputField 
-                label="Password" icon="🔒" type="password" required 
-                value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} 
+              <InputField
+                label="Password" icon="🔒" type="password" required
+                value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="Min. 6 characters"
               />
-              <InputField 
-                label="Confirm Password" icon="🔒" type="password" required 
-                value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} 
+              <InputField
+                label="Confirm Password" icon="🔒" type="password" required
+                value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
               />
             </div>
           </div>
 
-          {/* Section 3 */}
+          {/* 3 · Craft & Profile */}
           <div className="seller-section-card">
             <h2 className="seller-section-title">
               <span className="seller-section-num">3</span> Craft & Profile
             </h2>
             <div className="seller-field" style={{ marginBottom: '1.25rem' }}>
-              <label className="seller-label">Craft Type <span className="req">*</span> <span style={{ fontWeight: 400, color: 'var(--smoke)' }}>(Select all that apply)</span></label>
+              <label className="seller-label">
+                Craft Type <span className="req">*</span>
+                <span style={{ fontWeight: 400, color: 'var(--smoke)', textTransform: 'none', letterSpacing: 0 }}> — select all that apply</span>
+              </label>
               <div className="craft-grid">
                 {CRAFT_TYPES.map(craft => (
                   <label key={craft} className="craft-checkbox-label">
@@ -248,54 +255,58 @@ export default function SellerRegister() {
                   </label>
                 ))}
                 <label className="craft-checkbox-label">
-                  <input type="checkbox" checked={otherCraft !== ''} onChange={(e) => { !e.target.checked ? setOtherCraft('') : setOtherCraft(' ') }} />
+                  <input
+                    type="checkbox"
+                    checked={otherCraft !== ''}
+                    onChange={(e) => { !e.target.checked ? setOtherCraft('') : setOtherCraft(' '); }}
+                  />
                   Other
                 </label>
               </div>
               {otherCraft !== '' && (
-                <input 
-                  type="text" className="seller-input" style={{ marginTop: '0.5rem' }} 
-                  value={otherCraft} onChange={(e) => setOtherCraft(e.target.value)} 
-                  placeholder="Specify craft (e.g. Macramé)" 
+                <input
+                  type="text" className="seller-input" style={{ marginTop: '0.75rem' }}
+                  value={otherCraft} onChange={(e) => setOtherCraft(e.target.value)}
+                  placeholder="Specify craft (e.g. Macramé)"
                 />
               )}
             </div>
 
             <div className="seller-grid seller-grid-2">
-              <InputField 
-                label="Years of Experience" icon="⏱" required 
-                value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} 
+              <InputField
+                label="Years of Experience" icon="⏱" required
+                value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })}
                 placeholder="e.g. 5 years"
               />
               <div className="seller-field full">
                 <label className="seller-label">Bio / About You <span className="req">*</span></label>
-                <textarea 
-                  required className="seller-textarea" 
+                <textarea
+                  required className="seller-textarea"
                   value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                  placeholder="Tell buyers about yourself, your craft, and your story..."
+                  placeholder="Tell buyers about yourself, your craft, and your story…"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 4 */}
+          {/* 4 · Location */}
           <div className="seller-section-card">
             <h2 className="seller-section-title">
               <span className="seller-section-num">4</span> Location
             </h2>
             <div className="seller-grid seller-grid-3">
-              <InputField 
-                label="City" icon="📍" required 
-                value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} 
+              <InputField
+                label="City" icon="📍" required
+                value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
               />
-              <InputField 
-                label="District" icon="🗺" required 
-                value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value })} 
+              <InputField
+                label="District" icon="🗺" required
+                value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value })}
               />
               <div className="seller-field">
                 <label className="seller-label">State <span className="req">*</span></label>
-                <select 
-                  required className="seller-select" 
+                <select
+                  required className="seller-select"
                   value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })}
                 >
                   <option value="">Select state</option>
@@ -305,54 +316,59 @@ export default function SellerRegister() {
             </div>
           </div>
 
-          {/* Section 5 */}
+          {/* 5 · Social Links */}
           <div className="seller-section-card">
             <h2 className="seller-section-title">
-              <span className="seller-section-num">5</span> Social Links <span style={{ fontWeight: 400, color: 'var(--smoke)' }}>(Optional)</span>
+              <span className="seller-section-num">5</span> Social Links
+              <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 400, fontSize: '0.8rem', color: 'var(--smoke)' }}>Optional</span>
             </h2>
             <div className="seller-grid seller-grid-2">
-              <InputField 
-                label="WhatsApp Number" icon="📱" 
-                value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} 
+              <InputField
+                label="WhatsApp Number" icon="📱"
+                value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
               />
-              <InputField 
-                label="Instagram Handle" icon="@" 
-                value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })} 
+              <InputField
+                label="Instagram Handle" icon="@"
+                value={form.instagram} onChange={(e) => setForm({ ...form, instagram: e.target.value })}
               />
             </div>
           </div>
 
-          {/* Section 6 */}
+          {/* 6 · Documents */}
           <div className="seller-section-card">
             <h2 className="seller-section-title">
               <span className="seller-section-num">6</span> Documents & Verification
             </h2>
 
-            <FileUploadBox 
-              label="Profile Photo" accept="image/*" 
-              file={profileImage} onChange={setProfileImage} 
+            <FileUploadBox
+              label="Profile Photo" accept="image/*"
+              file={profileImage} onChange={setProfileImage}
             />
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <label className="seller-label" style={{ display: 'block', marginBottom: '0.4rem' }}>
+              <label className="seller-label" style={{ display: 'block', marginBottom: '0.6rem' }}>
                 Do you have a Pehchan Card? <span className="req">*</span>
               </label>
               <div className="seller-toggle-row">
-                <button 
-                  type="button" 
-                  onClick={() => setForm({ ...form, hasPehchanCard: 'yes' })} 
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, hasPehchanCard: 'yes' })}
                   className={`seller-toggle-btn ${form.hasPehchanCard === 'yes' ? 'selected' : ''}`}
-                >✓ Yes, I have it</button>
-                <button 
-                  type="button" 
-                  onClick={() => { setForm({ ...form, hasPehchanCard: 'no' }); setArtisanCardFile(null); }} 
+                >
+                  ✓ Yes, I have it
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setForm({ ...form, hasPehchanCard: 'no' }); setArtisanCardFile(null); }}
                   className={`seller-toggle-btn ${form.hasPehchanCard === 'no' ? 'selected' : ''}`}
-                >✕ No, I don't</button>
+                >
+                  ✕ No, I don't
+                </button>
               </div>
 
               {form.hasPehchanCard === 'yes' && (
-                <FileUploadBox 
-                  label="Upload Pehchan Card" accept="image/*,application/pdf" 
+                <FileUploadBox
+                  label="Upload Pehchan Card" accept="image/*,application/pdf"
                   file={artisanCardFile} onChange={setArtisanCardFile} required
                 />
               )}
@@ -368,19 +384,19 @@ export default function SellerRegister() {
               )}
             </div>
 
-            <div className="seller-field" style={{ marginBottom: '1rem' }}>
+            <div className="seller-field" style={{ marginBottom: '1.25rem' }}>
               <label className="seller-label">ID Proof Type <span className="req">*</span></label>
-              <select 
-                required className="seller-select" 
+              <select
+                required className="seller-select"
                 value={form.idProofType} onChange={(e) => setForm({ ...form, idProofType: e.target.value })}
               >
                 <option value="">Select document type</option>
                 {ID_PROOF_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
-            
-            <FileUploadBox 
-              label="Upload ID Proof" accept="image/*,application/pdf" 
+
+            <FileUploadBox
+              label="Upload ID Proof" accept="image/*,application/pdf"
               file={idProofFile} onChange={setIdProofFile} required
             />
           </div>
@@ -388,6 +404,7 @@ export default function SellerRegister() {
           <button type="submit" disabled={loading} className="seller-btn-primary large" style={{ marginTop: '2rem' }}>
             {loading ? <><span className="spinner" /> Submitting Registration…</> : 'Submit Registration →'}
           </button>
+
           <p className="seller-footer-text">
             Your application will be reviewed by our team. You'll be notified via email once approved.
           </p>

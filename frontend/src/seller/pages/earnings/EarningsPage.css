@@ -1,0 +1,190 @@
+/* =============================================
+   EARNINGS PAGE — Financial dashboard style
+   Uses seller.css variables exclusively
+   ============================================= */
+
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes barRise { from{height:0} }
+
+.earnings-page { animation: fadeIn 0.4s ease-out; }
+
+/* ── Header ── */
+.earnings-header { margin-bottom: 1.75rem; animation: fadeUp 0.4s ease both; }
+.earnings-title {
+  font-family: var(--font-display);
+  font-size: 2rem; font-weight: 600; color: var(--ink); margin: 0 0 0.2rem; line-height: 1.1;
+}
+.earnings-sub { font-family: var(--font-ui); font-size: 0.83rem; color: var(--smoke); margin: 0; }
+
+/* ── Summary cards ── */
+.earnings-cards {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; margin-bottom: 1.5rem;
+  animation: fadeUp 0.4s ease both; animation-delay: 0.05s;
+}
+.earnings-card {
+  border-radius: 18px; padding: 1.4rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  border: 1px solid transparent; position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.earnings-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); }
+.earnings-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.earnings-card--primary   { background: var(--clay-pale); border-color: #f5cfc4; }
+.earnings-card--pending   { background: #fef9ee; border-color: var(--gold-light); }
+.earnings-card--available { background: #f0fdf4; border-color: #bbf7d0; }
+.earnings-card--growth    { background: #f5f3ff; border-color: #ddd6fe; }
+.earnings-card--primary::before   { background: var(--clay); }
+.earnings-card--pending::before   { background: var(--gold); }
+.earnings-card--available::before { background: #10b981; }
+.earnings-card--growth::before    { background: #7c3aed; }
+.earnings-card__icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: rgba(255,255,255,0.7);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.earnings-card--primary   .earnings-card__icon { color: var(--clay); }
+.earnings-card--pending   .earnings-card__icon { color: var(--gold); }
+.earnings-card--available .earnings-card__icon { color: #10b981; }
+.earnings-card--growth    .earnings-card__icon { color: #7c3aed; }
+.earnings-card__value {
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 600;
+  color: var(--ink); line-height: 1;
+}
+.earnings-card__label {
+  font-family: var(--font-ui); font-size: 0.7rem; color: var(--smoke);
+  font-weight: 700; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* ── Insight banner ── */
+.earnings-insight {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  background: var(--gold-pale); border: 1px solid var(--gold-light);
+  border-radius: 16px; padding: 1.1rem 1.4rem;
+  font-family: var(--font-ui); font-size: 0.86rem; color: var(--bark);
+  margin-bottom: 1.5rem; line-height: 1.65;
+  animation: fadeUp 0.4s ease both; animation-delay: 0.1s;
+}
+.earnings-insight__emoji { font-size: 1.4rem; flex-shrink: 0; }
+
+/* ── Two-column ── */
+.earnings-grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.25rem; margin-bottom: 1.5rem;
+  animation: fadeUp 0.4s ease both; animation-delay: 0.15s;
+}
+
+.earnings-withdraw-card,
+.earnings-chart-card,
+.earnings-history-card {
+  background: var(--white); border: 1px solid var(--parchment);
+  border-radius: 20px; padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-soft);
+}
+.earnings-history-card { animation: fadeUp 0.4s ease both; animation-delay: 0.2s; }
+
+.earnings-section-title {
+  font-family: var(--font-display); font-size: 1.15rem; font-weight: 600;
+  color: var(--ink); margin: 0 0 0.3rem;
+}
+.earnings-section-sub {
+  font-family: var(--font-ui); font-size: 0.8rem; color: var(--smoke); margin-bottom: 1.1rem;
+}
+
+/* ── Withdraw form ── */
+.earnings-withdraw-form { display: flex; flex-direction: column; gap: 0.75rem; }
+.earnings-withdraw-available {
+  font-family: var(--font-ui); font-size: 0.87rem; color: var(--bark);
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+}
+.earnings-withdraw-available strong { color: #059669; }
+.earnings-withdraw-input {
+  padding: 0.75rem 0.9rem; border: 1.5px solid var(--parchment); border-radius: 12px;
+  font-family: var(--font-ui); font-size: 0.87rem; color: var(--ink);
+  background: var(--cream); outline: none; transition: all 0.2s;
+}
+.earnings-withdraw-input:focus {
+  border-color: var(--teal); background: var(--white);
+  box-shadow: 0 0 0 3px rgba(45,140,122,0.1);
+}
+.earnings-withdraw-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.8rem 1.25rem;
+  background: linear-gradient(135deg, var(--clay), var(--clay-dark));
+  color: var(--white); border: none; border-radius: 12px;
+  font-family: var(--font-ui); font-size: 0.87rem; font-weight: 700;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(192,82,42,0.25);
+}
+.earnings-withdraw-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.earnings-withdraw-msg { font-family: var(--font-ui); font-size: 0.82rem; color: #059669; font-weight: 600; }
+
+/* ── Chart ── */
+.earnings-chart {
+  display: flex; align-items: flex-end; gap: 5px;
+  height: 140px; margin-top: 1rem;
+}
+.earnings-bar-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 5px; height: 100%; justify-content: flex-end;
+}
+.earnings-bar {
+  width: 100%; border-radius: 5px 5px 0 0; min-height: 4px;
+  background: var(--parchment); transition: background 0.2s;
+}
+.earnings-bar:nth-child(1) { background: var(--cream-dark); }
+.earnings-bar-wrap:nth-child(8) .earnings-bar,
+.earnings-bar-wrap:nth-child(9) .earnings-bar { background: var(--clay); }
+.earnings-bar-wrap:hover .earnings-bar { background: var(--teal) !important; }
+.earnings-bar-label {
+  font-family: var(--font-ui); font-size: 0.62rem; color: var(--smoke);
+}
+
+/* ── History ── */
+.earnings-history-head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;
+}
+.earnings-download-btn {
+  display: flex; align-items: center; gap: 0.35rem;
+  padding: 0.45rem 0.9rem; border: 1.5px solid var(--parchment);
+  border-radius: 10px; background: var(--cream);
+  font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700;
+  color: var(--smoke); cursor: pointer; transition: all 0.18s;
+}
+.earnings-download-btn:hover { border-color: var(--teal-light); color: var(--teal-dark); background: var(--teal-pale); }
+.earnings-table-wrap { overflow-x: auto; }
+.earnings-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 0.85rem; }
+.earnings-table th {
+  text-align: left; padding: 0.6rem 0.9rem;
+  font-size: 0.67rem; color: var(--smoke); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  background: var(--cream); border-bottom: 1px solid var(--parchment);
+}
+.earnings-table td {
+  padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--cream-dark); color: var(--bark);
+}
+.earnings-table tr:last-child td { border-bottom: none; }
+.earnings-table tr:hover td { background: var(--cream); }
+.earnings-order-id { font-weight: 700; color: var(--teal); }
+.earnings-amount { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; }
+.earnings-amount--credit { color: #059669; }
+.earnings-amount--debit  { color: var(--clay); }
+.earnings-type-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 20px;
+  font-family: var(--font-ui); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em;
+}
+.earnings-type-pill--credit { background: #d1fae5; color: #065f46; }
+.earnings-type-pill--debit  { background: var(--clay-pale); color: var(--clay-dark); }
+.earnings-status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 20px;
+  font-family: var(--font-ui); font-size: 0.65rem; font-weight: 700;
+}
+.earnings-status-pill--done    { background: #d1fae5; color: #065f46; }
+.earnings-status-pill--pending { background: #fef3c7; color: #b45309; }
+
+@media (max-width: 900px) { .earnings-cards { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .earnings-grid-2 { grid-template-columns: 1fr; } }
