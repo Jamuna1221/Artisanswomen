@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import api from '../services/axios';
 
 const AuthContext = createContext(null);
 
@@ -6,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sellerProfile, setSellerProfile] = useState(null);
 
   useEffect(() => {
     // Rehydrate auth state from localStorage on app mount
@@ -17,6 +19,23 @@ export const AuthProvider = ({ children }) => {
     }
     setLoading(false);
   }, []);
+
+  const fetchSellerProfile = async () => {
+    try {
+      const res = await api.get('/seller/settings');
+      setSellerProfile(res.data);
+    } catch (err) {
+      console.error('Failed to fetch seller profile', err);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchSellerProfile();
+    } else {
+      setSellerProfile(null);
+    }
+  }, [token]);
 
   const login = (tokenValue, userData) => {
     localStorage.setItem('authToken', tokenValue);
@@ -31,10 +50,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('tempToken');
     setToken(null);
     setUser(null);
+    setSellerProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, sellerProfile, setSellerProfile, fetchSellerProfile }}>
       {children}
     </AuthContext.Provider>
   );

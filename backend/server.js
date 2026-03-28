@@ -18,6 +18,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const authRoutes = require("./routes/auth");
 const notificationRoutes = require("./routes/notificationRoutes");
+const sellerSettingsRoutes = require("./routes/sellerSettingsRoutes");
 
 // Connect to Database
 connectDB();
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 
 // Seller/Auth Routes (from teammate)
 app.use("/api/auth", authRoutes);
+app.use("/api/seller/settings", sellerSettingsRoutes);
 
 // Admin Routes
 app.use("/api/admin/auth", adminAuthRoutes);

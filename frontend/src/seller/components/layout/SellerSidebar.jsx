@@ -16,19 +16,24 @@ import { useAuth } from '../../context/AuthContext';
 import './SellerSidebar.css';
 
 const navItems = [
-  { name: 'Dashboard',  path: '/seller/dashboard',          icon: <LayoutDashboard size={20} /> },
-  { name: 'Products',   path: '/seller/dashboard/products', icon: <ShoppingBag size={20} /> },
-  { name: 'Orders',     path: '/seller/dashboard/orders',   icon: <ShoppingCart size={20} /> },
-  { name: 'Earnings',   path: '/seller/dashboard/earnings', icon: <IndianRupee size={20} /> },
-  { name: 'Reviews',    path: '/seller/dashboard/reviews',  icon: <Star size={20} /> },
-  { name: 'Messages',   path: '/seller/dashboard/messages', icon: <MessageSquare size={20} /> },
-  { name: 'Settings',   path: '/seller/dashboard/settings', icon: <Settings size={20} /> },
+  { name: 'Dashboard', path: '/seller/dashboard', icon: <LayoutDashboard size={20} /> },
+  { name: 'Products', path: '/seller/dashboard/products', icon: <ShoppingBag size={20} /> },
+  { name: 'Orders', path: '/seller/dashboard/orders', icon: <ShoppingCart size={20} /> },
+  { name: 'Earnings', path: '/seller/dashboard/earnings', icon: <IndianRupee size={20} /> },
+  { name: 'Reviews', path: '/seller/dashboard/reviews', icon: <Star size={20} /> },
+  { name: 'Messages', path: '/seller/dashboard/messages', icon: <MessageSquare size={20} /> },
+  { name: 'Settings', path: '/seller/dashboard/settings', icon: <Settings size={20} /> },
 ];
 
 const SellerSidebar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, sellerProfile } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  const storeName = sellerProfile?.storeProfile?.storeName;
+  const fullName = sellerProfile?.account?.fullName || user?.name;
+  const displayName = storeName || fullName || 'Artisan';
+  const logoUrl = sellerProfile?.storeProfile?.logoUrl;
 
   const handleLogout = () => {
     logout();
@@ -62,12 +67,14 @@ const SellerSidebar = () => {
         {/* Seller info */}
         {!collapsed && (
           <div className="s-sidebar__seller-info">
-            <div className="s-sidebar__avatar">
-              {user?.name ? user.name.charAt(0).toUpperCase() : '🎨'}
+            <div className="s-sidebar__avatar" style={logoUrl ? { backgroundImage: `url(${logoUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' } : {}}>
+              {!logoUrl && (displayName.charAt(0).toUpperCase())}
             </div>
             <div>
-              <div className="s-sidebar__seller-name">{user?.name || 'Artisan'}</div>
-              <div className="s-sidebar__seller-badge">✓ Approved Seller</div>
+              <div className="s-sidebar__seller-name">{displayName}</div>
+              <div className="s-sidebar__seller-badge">
+                {user?.verificationStatus === 'Approved' ? '✓ Approved Seller' : (user?.verificationStatus ? `• ${user.verificationStatus}` : '✓ Approved Seller')}
+              </div>
             </div>
           </div>
         )}
