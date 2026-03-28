@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const http = require("http");
+const { init: initSocket } = require("./config/socket");
 
 // Route Imports
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
@@ -15,6 +17,7 @@ const complaintRoutes = require("./routes/complaintRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const authRoutes = require("./routes/auth");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 // Connect to Database
 connectDB();
@@ -48,6 +51,9 @@ app.use("/api/admin/complaints", complaintRoutes);
 app.use("/api/admin/categories", categoryRoutes);
 app.use("/api/admin/analytics", analyticsRoutes);
 
+// General Notification System
+app.use("/api/notifications", notificationRoutes);
+
 // Simulation Routes for Notifications
 const simulationController = require("./controllers/simulationController");
 app.post("/api/admin/simulate/user-login", simulationController.simulateUserLogin);
@@ -61,6 +67,17 @@ app.use(errorHandler);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = http.createServer(app);
+
+// Initialize Socket.io
+const io = initSocket(server);
+io.on("connection", (socket) => {
+  console.log("Admin Socket Client Connected:", socket.id);
+  socket.on("disconnect", () => {
+    console.log("Admin Socket Client Disconnected:", socket.id);
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });

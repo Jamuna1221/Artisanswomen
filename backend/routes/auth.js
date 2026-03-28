@@ -105,6 +105,9 @@ router.post(
     { name: "profileImage", maxCount: 1 },
     { name: "artisanCardFile", maxCount: 1 },
     { name: "idProofFile", maxCount: 1 },
+    { name: "businessProofFile", maxCount: 1 },
+    { name: "addressProofFile", maxCount: 1 },
+    { name: "productImages", maxCount: 5 },
   ]),
   async (req, res) => {
     try {
@@ -195,6 +198,27 @@ router.post(
         };
       }
 
+      if (req.files?.businessProofFile) {
+        user.businessProofFile = {
+          data: req.files.businessProofFile[0].buffer,
+          contentType: req.files.businessProofFile[0].mimetype,
+        };
+      }
+
+      if (req.files?.addressProofFile) {
+        user.addressProofFile = {
+          data: req.files.addressProofFile[0].buffer,
+          contentType: req.files.addressProofFile[0].mimetype,
+        };
+      }
+
+      if (req.files?.productImages && req.files.productImages.length > 0) {
+        user.productImages = req.files.productImages.map(file => ({
+          data: file.buffer,
+          contentType: file.mimetype,
+        }));
+      }
+
       await user.save();
 
       // Create Artisan Profile to sync data
@@ -220,17 +244,17 @@ router.post(
       // Notify Admins
       if (typeof createAdminNotification === 'function') {
         try {
-            await createAdminNotification("Seller", `New seller registration received from ${user.name}`, {
-                sellerName: user.name,
-                email: user.email,
-                phone: user.phone,
-                craftType: parsedCraftType.join(", "),
-                createdAt: user.createdAt || new Date(),
-                status: "Pending",
-                artisanId: user._id
-            });
-        } catch(notifErr) {
-            console.error("Failed to create admin notification:", notifErr);
+          await createAdminNotification("Seller", `New seller registration received from ${user.name}`, {
+            sellerName: user.name,
+            email: user.email,
+            phone: user.phone,
+            craftType: parsedCraftType.join(", "),
+            createdAt: user.createdAt || new Date(),
+            status: "Pending",
+            artisanId: user._id
+          });
+        } catch (notifErr) {
+          console.error("Failed to create admin notification:", notifErr);
         }
       }
 
@@ -267,6 +291,10 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(401).json({ message: "Invalid email or password" });
+
+    if (user.role === 'seller' && user.verificationStatus !== 'Approved') {
+      return res.status(403).json({ message: "Your account is pending admin approval or has been rejected. You cannot log in yet." });
+    }
 
     const token = generateToken(user._id, "7d");
 
@@ -322,6 +350,37 @@ router.post("/admin/approve", async (req, res) => {
   } catch (err) {
     console.error("admin/approve error:", err);
     res.status(500).json({ message: "Failed to process action", error: err.message });
+  }
+});
+
+// ─── GET /api/auth/document/:userId/:docType ──────────────────────────────
+// Serve individual document buffers as files
+router.get("/document/:userId/:docType", async (req, res) => {
+  try {
+    const { userId, docType } = req.params;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    let doc;
+    if (docType === "profileImage") doc = user.profileImage;
+    else if (docType === "artisanCard") doc = user.artisanCardFile;
+    else if (docType === "idProof") doc = user.idProofFile;
+    else if (docType === "businessProof") doc = user.businessProofFile;
+    else if (docType === "addressProof") doc = user.addressProofFile;
+    else if (docType.startsWith("productImage_")) {
+      const idx = parseInt(docType.split("_")[1]);
+      doc = user.productImages[idx];
+    }
+
+    if (!doc || !doc.data) {
+      return res.status(404).json({ message: "Document not found" });
+    }
+
+    res.set("Content-Type", doc.contentType);
+    res.send(doc.data);
+  } catch (err) {
+    console.error("document error:", err);
+    res.status(500).json({ message: "Failed to fetch document", error: err.message });
   }
 });
 

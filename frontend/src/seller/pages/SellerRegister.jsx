@@ -74,6 +74,9 @@ export default function SellerRegister() {
   const [profileImage, setProfileImage] = useState(null);
   const [artisanCardFile, setArtisanCardFile] = useState(null);
   const [idProofFile, setIdProofFile] = useState(null);
+  const [businessProofFile, setBusinessProofFile] = useState(null);
+  const [addressProofFile, setAddressProofFile] = useState(null);
+  const [productImages, setProductImages] = useState([]);
 
   useEffect(() => {
     if (!localStorage.getItem('tempToken')) navigate('/seller/signup');
@@ -113,6 +116,11 @@ export default function SellerRegister() {
       if (profileImage) data.append('profileImage', profileImage);
       if (artisanCardFile && form.hasPehchanCard === 'yes') data.append('artisanCardFile', artisanCardFile);
       if (idProofFile) data.append('idProofFile', idProofFile);
+      if (businessProofFile) data.append('businessProofFile', businessProofFile);
+      if (addressProofFile) data.append('addressProofFile', addressProofFile);
+      if (productImages && productImages.length > 0) {
+        productImages.forEach(file => data.append('productImages', file));
+      }
 
       const res = await api.post('/auth/register', data, {
         headers: { Authorization: `Bearer ${tempToken}` },
@@ -136,14 +144,25 @@ export default function SellerRegister() {
     }
   };
 
-  const FileUploadBox = ({ label, accept, file, onChange, required }) => (
+  const FileUploadBox = ({ label, accept, file, onChange, required, isMultiple }) => (
     <div style={{ marginBottom: '1.25rem' }}>
       <label className="seller-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
         {label} {required && <span className="req">*</span>}
       </label>
       <label className="seller-file-label">
-        <input type="file" accept={accept} onChange={(e) => onChange(e.target.files[0])} />
-        {file ? (
+        <input
+          type="file"
+          accept={accept}
+          multiple={isMultiple}
+          onChange={(e) => isMultiple ? onChange(Array.from(e.target.files)) : onChange(e.target.files[0])}
+        />
+        {isMultiple && file && file.length > 0 ? (
+          <>
+            <div className="seller-file-icon" style={{ color: '#1a5c38' }}>✓</div>
+            <div className="seller-file-hint success">{file.length} files selected</div>
+            <div className="seller-file-name" style={{ marginTop: '0.2rem' }}>Click to change</div>
+          </>
+        ) : (!isMultiple && file) ? (
           <>
             <div className="seller-file-icon" style={{ color: 'var(--teal)' }}>✓</div>
             <div className="seller-file-hint success">{file.name}</div>
@@ -398,6 +417,21 @@ export default function SellerRegister() {
             <FileUploadBox
               label="Upload ID Proof" accept="image/*,application/pdf"
               file={idProofFile} onChange={setIdProofFile} required
+            />
+
+            <FileUploadBox
+              label="Upload Business Proof (Optional)" accept="image/*,application/pdf"
+              file={businessProofFile} onChange={setBusinessProofFile}
+            />
+
+            <FileUploadBox
+              label="Upload Address Proof" accept="image/*,application/pdf"
+              file={addressProofFile} onChange={setAddressProofFile} required
+            />
+
+            <FileUploadBox
+              label="Upload Product Images (up to 5)" accept="image/*"
+              file={productImages} onChange={setProductImages} required isMultiple={true}
             />
           </div>
 

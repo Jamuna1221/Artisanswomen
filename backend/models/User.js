@@ -43,6 +43,20 @@ const userSchema = new mongoose.Schema(
       contentType: { type: String },
       idProofType: { type: String }, // e.g. "Aadhaar", "PAN", "Passport", etc.
     },
+    businessProofFile: {
+      data: { type: Buffer },
+      contentType: { type: String },
+    },
+    addressProofFile: {
+      data: { type: Buffer },
+      contentType: { type: String },
+    },
+    productImages: [
+      {
+        data: { type: Buffer },
+        contentType: { type: String },
+      }
+    ],
 
     // --- Verification ---
     isVerified: { type: Boolean, default: false },
