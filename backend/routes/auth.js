@@ -275,6 +275,86 @@ router.post(
   }
 );
 
+// ─── POST /api/auth/register-buyer ───────────────────────────────────────────
+// Buyer registration directly to 'users' collection
+router.post("/register-buyer", async (req, res) => {
+  try {
+    const { firstName, lastName, fullName, gender, city, state, phone, age, about, email, password } = req.body;
+
+    if (!email || !password || !firstName) {
+      return res.status(400).json({ message: "First name, email, and password are required" });
+    }
+
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: "An account with this email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const resolvedName = fullName || `${firstName.trim()} ${lastName?.trim() || ''}`.trim();
+
+    const newBuyer = new User({
+      name: resolvedName,
+      firstName,
+      lastName,
+      fullName: resolvedName,
+      email,
+      password: hashedPassword,
+      role: "buyer",
+      gender,
+      city,
+      state,
+      phone,
+      age: age ? Number(age) : undefined,
+      bio: about,
+      isVerified: true, // Buyers don't need verification
+    });
+
+    await newBuyer.save();
+
+    // Create Admin notification
+    if (typeof createAdminNotification === 'function') {
+      try {
+        await createAdminNotification("buyer_registration", `New buyer account created: ${resolvedName}`, {
+          buyerName: resolvedName,
+          email,
+          city,
+          state,
+          createdAt: newBuyer.createdAt || new Date(),
+          type: "buyer_registration"
+        });
+        
+        // Also emit a specific event for the buyers page auto-refresh
+        const { getIO } = require("../config/socket");
+        try {
+          getIO().emit("new_buyer_registered", { buyer: newBuyer });
+        } catch (e) {
+          console.log("Socket emit failed line", e.message);
+        }
+      } catch (notifErr) {
+        console.error("Failed to create admin notification:", notifErr);
+      }
+    }
+
+    const token = generateToken(newBuyer._id, "30d");
+
+    res.status(201).json({
+      message: "Buyer registered successfully",
+      token,
+      user: {
+        _id: newBuyer._id,
+        name: newBuyer.name,
+        email: newBuyer.email,
+        role: newBuyer.role
+      }
+    });
+  } catch (err) {
+    console.error("register-buyer error:", err);
+    res.status(500).json({ message: "Server error during registration", error: err.message });
+  }
+});
+
 // ─── POST /api/auth/login ─────────────────────────────────────────────────────
 // Email + Password login for registered (but pending/approved) sellers
 router.post("/login", async (req, res) => {

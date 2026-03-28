@@ -8,6 +8,9 @@ import { AuthProvider } from './admin/context/AuthContext';
 import { AuthProvider as SellerAuthProvider } from './seller/context/AuthContext';
 import AppRoutes from './admin/routes/AppRoutes';
 import SellerRoutes from './seller/routes/SellerRoutes';
+import UserProtectedRoute from './user/ProtectedRoute';
+import AccountPage from './user/pages/Account/AccountPage';
+import { Navigate } from 'react-router-dom';
 import './admin/admin.css';
 
 // Help & Footer
@@ -35,12 +38,16 @@ function App() {
             <Route path="/seller/*" element={<SellerRoutes />} />
 
             {/* Buyer/Public Routes with Footer */}
-            <Route path="/" element={<><Home /><Footer /></>} />
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<><Dashboard /><Footer /></>} />
             <Route path="/signin" element={<><SignIn /><Footer /></>} />
             <Route path="/otp" element={<><EmailOtpVerification /><Footer /></>} />
             <Route path="/verify-otp" element={<><EmailOtpVerification /><Footer /></>} />
-            <Route path="/account" element={<><Dashboard /><Footer /></>} />
-            <Route path="/dashboard" element={<><Dashboard /><Footer /></>} />
+            <Route path="/account/*" element={
+              <UserProtectedRoute>
+                <AccountPage />
+              </UserProtectedRoute>
+            } />
 
             {/* Help Pages */}
             <Route path="/faqs" element={<><FAQsPage /><Footer /></>} />

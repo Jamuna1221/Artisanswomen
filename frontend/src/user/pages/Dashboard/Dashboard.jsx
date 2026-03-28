@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import "./Dashboard.css";
 
 // ── Dummy Data ────────────────────────────────────────────────────────────────
@@ -66,8 +67,13 @@ const RECOMMENDED = [
   { id: 13, name: "Ajrakh Print Stole", price: 699, mrp: 1199, rating: 4.5, img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=80" },
 ];
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 const discount = (price, mrp) => Math.round(((mrp - price) / mrp) * 100);
+
+const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/home";
+};
 
 const StarRating = ({ rating }) => {
   const full = Math.floor(rating);
@@ -97,13 +103,13 @@ function Header({ user, cartCount }) {
     <header className={`header${scrolled ? " header--scrolled" : ""}`}>
       <div className="header__inner">
         {/* Logo */}
-        <div className="header__logo">
-          <span className="logo-icon">♡</span>
-          <div className="logo-text">
-            <span className="logo-brand">Handora</span>
-            <span className="logo-tagline">by artisans</span>
-          </div>
-        </div>
+          <Link to="/home" className="header__logo">
+            <span className="logo-icon">♡</span>
+            <div className="logo-text">
+              <span className="logo-brand">Handora</span>
+              <span className="logo-tagline">by artisans</span>
+            </div>
+          </Link>
 
         {/* Search */}
         <div className="header__search">
@@ -127,11 +133,11 @@ function Header({ user, cartCount }) {
             </div>
             {dropdown && (
               <div className="user-dropdown">
-                <a href="/account">My Account</a>
-                <a href="/orders">My Orders</a>
-                <a href="/wishlist">Wishlist</a>
+                <Link to="/account/overview">My Account</Link>
+                <Link to="/account/orders">My Orders</Link>
+                <Link to="/account/wishlist">Wishlist</Link>
                 <hr />
-                <a href="/logout" className="logout-link">Logout</a>
+                <button onClick={handleLogout} className="logout-link" style={{background:'none', border:'none', cursor:'pointer', padding:'10px 15px', color:'#d32f2f', textAlign:'left'}}>Logout</button>
               </div>
             )}
           </div>

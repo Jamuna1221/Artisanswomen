@@ -1,0 +1,83 @@
+.buyers-page {
+  padding: 24px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  width: 300px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.buyers-modal {
+  width: 600px;
+  padding: 25px;
+}
+
+.modal-title {
+  margin-bottom: 20px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.buyer-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+
+.meta-block {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.meta-block strong {
+  color: #222;
+  margin-right: 5px;
+}
+
+.buyer-bio-section {
+  padding: 18px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.buyer-bio-section h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.buyer-bio-section p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #666;
+}
+
+.buyer-row {
+  transition: background-color 0.2s;
+}
+
+.buyer-row:hover {
+  background-color: #f4f7f6;
+}

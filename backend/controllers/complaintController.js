@@ -3,13 +3,14 @@ const { createAdminNotification } = require("../utils/notificationHelper");
 
 const getComplaints = async (req, res) => {
   try {
-    const { status, page = 1, limit = 10 } = req.query;
+    const { status, fromRole, page = 1, limit = 10 } = req.query;
     const filter = {};
     if (status) filter.status = status;
+    if (fromRole) filter.fromRole = fromRole;
 
     const total = await Complaint.countDocuments(filter);
     const complaints = await Complaint.find(filter)
-      .populate("userId", "name email")
+      .populate("userId", "name email role")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));

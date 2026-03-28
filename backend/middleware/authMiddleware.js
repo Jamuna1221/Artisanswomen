@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Admin = require("../models/Admin");
+const Buyer = require("../models/buyerModel");
 
 const protect = async (req, res, next) => {
   let token;
@@ -18,7 +19,7 @@ const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Check if it's an admin token (admin tokens include role: "admin")
+    // Check if it's an admin token
     if (decoded.role === "admin") {
       req.admin = await Admin.findById(decoded.id).select("-password -otp -otpExpires");
       if (!req.admin) {
@@ -27,11 +28,19 @@ const protect = async (req, res, next) => {
       return next();
     }
 
-    // Otherwise it's a seller/user token
-    req.user = await User.findById(decoded.id).select("-password -otp -otpExpiry");
-    if (!req.user) {
+    // Attempt to find in User collection (Sellers and Unified Buyers)
+    let user = await User.findById(decoded.id).select("-password -otp -otpExpiry");
+    
+    // Fallback to legacy Buyers collection if not found
+    if (!user) {
+      user = await Buyer.findById(decoded.id).select("-password");
+    }
+
+    if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
+
+    req.user = user;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Token is invalid or expired" });
@@ -56,12 +65,21 @@ const protectSeller = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("-password -otp -otpExpiry");
+    
+    // Primary lookup
+    let user = await User.findById(decoded.id).select("-password -otp -otpExpiry");
+    
+    // Legacy lookup
+    if(!user) {
+        user = await Buyer.findById(decoded.id).select("-password");
+    }
+
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
 
-    if (user.verificationStatus !== "Approved") {
+    // Only sellers need verificationStatus check
+    if (user.role === 'seller' && user.verificationStatus !== "Approved") {
       return res.status(403).json({
         message: "Your account is not yet approved. Please wait for admin approval.",
         verificationStatus: user.verificationStatus,

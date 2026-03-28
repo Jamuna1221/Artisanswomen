@@ -1,4 +1,4 @@
-const Buyer = require('../models/buyerModel');
+const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const generateToken = require('../utils/generateToken');
 
@@ -8,24 +8,24 @@ const generateToken = require('../utils/generateToken');
 const loginBuyer = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log('Login Payload Received:', req.body); // Debugging
-
+    
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = await Buyer.findOne({ email });
+    // Always check the Users collection
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: 'Email not registered' });
     }
 
-    if (!user.password) {
-      return res.status(401).json({ message: 'Incorrect password' });
+    // Ensure they are actually a buyer or at least have a role that can login here
+    if (user.role === 'seller' && user.verificationStatus !== 'Approved') {
+        return res.status(403).json({ message: "Seller account pending approval" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
@@ -52,27 +52,21 @@ const loginBuyer = async (req, res) => {
 // @access  Public
 const registerBuyer = async (req, res) => {
   try {
-    console.log('Register Payload Received:', req.body); // Debugging requirement
-    
     const { name, email, password, gender, phone, city, state, age, bio } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
     }
 
-    // Check MongoDB if User Exists in buyers collection
-    const userExists = await Buyer.findOne({ email });
-
+    // Check in unified collection
+    const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user in buyers collection
-    const user = await Buyer.create({
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
@@ -81,13 +75,13 @@ const registerBuyer = async (req, res) => {
       phone,
       city,
       state,
-      age,
-      bio
+      age: age ? Number(age) : undefined,
+      bio,
+      isVerified: true // Buyers don't need verification
     });
 
     if (user) {
       const token = generateToken(user._id, '30d');
-      
       res.status(201).json({
         success: true,
         message: 'Buyer registered successfully',

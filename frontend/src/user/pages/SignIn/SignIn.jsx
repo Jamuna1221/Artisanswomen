@@ -155,7 +155,7 @@ export default function SignIn() {
         bio: form.bio.trim() || undefined,
       };
 
-      const res = await axios.post(`${API_BASE}/api/buyer/register`, payload);
+      const res = await axios.post(`${API_BASE}/api/auth/register-buyer`, payload);
       console.log('Signup API Response:', res.data); // Debugging
 
       if (res.data && res.data.token) {

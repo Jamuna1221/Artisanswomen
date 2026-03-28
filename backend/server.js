@@ -24,6 +24,8 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const sellerSettingsRoutes = require("./routes/sellerSettingsRoutes");
 const communityChatRoutes = require("./routes/communityChatRoutes");
 const helpRoutes = require("./routes/helpRoutes");
+const adminBuyerRoutes = require("./routes/adminBuyerRoutes");
+const accountRoutes = require("./routes/accountRoutes");
 
 // Connect to MongoDB
 connectDB();
@@ -64,6 +66,7 @@ app.use("/api/seller/settings", sellerSettingsRoutes);
 app.use("/api/buyer", buyerRoutes);
 app.use("/api/community/groups", communityChatRoutes);
 app.use("/api/help", helpRoutes);
+app.use("/api/account", accountRoutes);
 
 // Seller Dashboard Routes
 app.use("/api/seller/products", sellerProductRoutes);
@@ -77,6 +80,7 @@ app.use("/api/admin/products", productRoutes);
 app.use("/api/admin/orders", orderRoutes);
 app.use("/api/admin/complaints", complaintRoutes);
 app.use("/api/admin/categories", categoryRoutes);
+app.use("/api/admin/buyers", adminBuyerRoutes);
 app.use("/api/admin/analytics", analyticsRoutes);
 
 // General Notification System

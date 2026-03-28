@@ -9,6 +9,7 @@ const ComplaintsPage = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState(''); // 'Open', 'In Progress', 'Resolved', 'Closed'
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('seller'); // 'seller' or 'buyer'
 
   // Modal State
   const [selectedComplaint, setSelectedComplaint] = useState(null);
@@ -18,7 +19,7 @@ const ComplaintsPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const params = {};
+      const params = { fromRole: activeTab };
       if (filter) params.status = filter;
       if (searchTerm) params.search = searchTerm;
 
@@ -36,7 +37,7 @@ const ComplaintsPage = () => {
       fetchData();
     }, 300);
     return () => clearTimeout(delay);
-  }, [filter, searchTerm]);
+  }, [filter, searchTerm, activeTab]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -66,7 +67,7 @@ const ComplaintsPage = () => {
     }
   };
 
-  const headers = ["User", "Subject", "Date Submitted", "Status", "Actions"];
+  const headers = [activeTab === 'seller' ? "Artisan" : "Buyer", "Subject", "Date Submitted", "Status", "Actions"];
 
   const renderRow = (item) => (
     <tr key={item._id}>
@@ -106,35 +107,54 @@ const ComplaintsPage = () => {
 
   return (
     <div className="page-container complaints-page fade-in">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div>
-          <h2>Help & Support Tickets</h2>
-          <p>Manage complaints and support requests from sellers</p>
-        </div>
-
-        <div className="filters-container" style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '10px' }}>
-          <div className="search-bar" style={{ display: 'flex', alignItems: 'center', background: '#fff', padding: '8px 12px', borderRadius: '6px', border: '1px solid #ccc' }}>
-            <Search size={16} color="#888" style={{ marginRight: '8px' }} />
-            <input
-              type="text"
-              placeholder="Search subjects or users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ border: 'none', outline: 'none', background: 'transparent' }}
-            />
+      <div className="page-header">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+          <div>
+            <h2>Help & Support Tickets</h2>
+            <p>Manage complaints and support requests from {activeTab === 'seller' ? 'Sellers (Artisans)' : 'Buyers (Customers)'}</p>
           </div>
 
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }}
+          <div className="filters-container" style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '10px' }}>
+            <div className="search-bar" style={{ display: 'flex', alignItems: 'center', background: '#fff', padding: '8px 12px', borderRadius: '6px', border: '1px solid #ccc' }}>
+              <Search size={16} color="#888" style={{ marginRight: '8px' }} />
+              <input
+                type="text"
+                placeholder="Search subjects or users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ border: 'none', outline: 'none', background: 'transparent' }}
+              />
+            </div>
+
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #ccc', outline: 'none' }}
+            >
+              <option value="">All Statuses</option>
+              <option value="Open">Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="admin-tabs" style={{ display: 'flex', gap: '20px', marginTop: '30px', borderBottom: '2px solid #eee' }}>
+          <button 
+            className={`tab-btn ${activeTab === 'seller' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('seller')}
+            style={{ padding: '10px 20px', background: 'none', border: 'none', borderBottom: activeTab === 'seller' ? '3px solid var(--primary-color)' : 'none', cursor: 'pointer', fontWeight: activeTab === 'seller' ? '700' : '500' }}
           >
-            <option value="">All Statuses</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option>
-          </select>
+            Seller Complaints
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'buyer' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('buyer')}
+            style={{ padding: '10px 20px', background: 'none', border: 'none', borderBottom: activeTab === 'buyer' ? '3px solid var(--primary-color)' : 'none', cursor: 'pointer', fontWeight: activeTab === 'buyer' ? '700' : '500' }}
+          >
+            Buyer Complaints
+          </button>
         </div>
       </div>
 

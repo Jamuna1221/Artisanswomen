@@ -3,6 +3,7 @@ import { Bell, Search, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getAdminNotifications } from '../../services/authService';
 import { Link } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -20,9 +21,20 @@ const Navbar = () => {
       } catch (err) { }
     };
     fetchNotifs();
+    
+    // Initialize Socket
+    const socket = io('http://localhost:5000');
+    socket.on('new-notification', (notif) => {
+      setNotifications(prev => [notif, ...prev]);
+      setUnreadCount(prev => prev + 1);
+    });
+
     // Refresh count every 2 minutes
     const interval = setInterval(fetchNotifs, 120000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      socket.disconnect();
+    };
   }, []);
 
   const markNotifRead = async (id, e) => {

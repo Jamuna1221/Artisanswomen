@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema(
   {
     // --- Identity ---
+    firstName: { type: String, trim: true },
+    lastName: { type: String, trim: true },
+    fullName: { type: String, trim: true },
     name: { type: String, required: true, trim: true },
     role: { type: String, enum: ["seller", "buyer", "admin"], default: "seller" },
     email: { type: String, required: true, unique: true, lowercase: true },

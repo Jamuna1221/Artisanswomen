@@ -14,12 +14,26 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60)
     window.addEventListener('scroll', onScroll)
+    
+    // Check for logged in user
+    const stored = localStorage.getItem('user')
+    if (stored) setUser(JSON.parse(stored))
+
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    window.location.href = '/home'
+  }
 
   return (
     <>
@@ -68,15 +82,26 @@ export default function Navbar() {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round"/>
               </svg>
             </button>
-            <button className="nav-icon-btn nav-cart-btn" aria-label="Cart">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" strokeLinecap="round"/>
-                <line x1="3" y1="6" x2="21" y2="6"/>
-                <path d="M16 10a4 4 0 0 1-8 0" strokeLinecap="round"/>
-              </svg>
-              <span className="cart-badge">3</span>
-            </button>
-            <Link to="/signin" className="nav-cta">Sign In</Link>
+            
+            {user ? (
+              <div className="nav-profile-dropdown">
+                <button className="nav-user-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  <div className="user-initial">{user.name?.charAt(0).toUpperCase()}</div>
+                  <span className="user-fname">{user.name?.split(' ')[0]}</span>
+                </button>
+                {dropdownOpen && (
+                  <div className="nav-dropdown-content">
+                    <Link to="/account/overview" onClick={() => setDropdownOpen(false)}>My Account</Link>
+                    <Link to="/account/orders" onClick={() => setDropdownOpen(false)}>My Orders</Link>
+                    <Link to="/account/wishlist" onClick={() => setDropdownOpen(false)}>Wishlist</Link>
+                    <hr />
+                    <button onClick={handleLogout} className="drop-logout-btn">Logout</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/signin" className="nav-cta">Sign In</Link>
+            )}
           </div>
 
           {/* Hamburger */}
