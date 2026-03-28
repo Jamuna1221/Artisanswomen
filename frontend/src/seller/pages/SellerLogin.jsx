@@ -29,18 +29,51 @@ export default function SellerLogin() {
 
   return (
     <div className="seller-page">
-      <div style={{ width: '100%', maxWidth: '460px' }}>
-        {/* Brand */}
+      {/* ── Left decorative panel ── */}
+      <div className="seller-panel-left">
+        <div className="seller-panel-bg" />
+        <div className="seller-panel-overlay" />
+        <div className="seller-panel-content">
+          <div className="seller-panel-logo">
+            <div className="seller-panel-logo-mark">🧵</div>
+            <div className="seller-panel-logo-text">
+              <div className="seller-panel-logo-name">Handora</div>
+              <div className="seller-panel-logo-sub">Hand Made Haven</div>
+            </div>
+          </div>
+
+          <div className="seller-panel-mid">
+            <div>
+              <h1 className="seller-panel-headline">
+                Crafting<br />
+                <em>Tomorrow's</em><br />
+                Traditions
+              </h1>
+              <p className="seller-panel-caption">
+                Managing the world's most talented women artisans with precision and care.
+              </p>
+            </div>
+          </div>
+
+          <div className="seller-panel-badge">
+            <span className="seller-panel-badge-dot" />
+            Exclusively for Handora
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right form panel ── */}
+      <div className="seller-panel-right">
         <div className="seller-brand">
           <div className="seller-brand-icon">🧵</div>
-          <h1 className="seller-brand-title">Artisan Login</h1>
-          <p className="seller-brand-sub">MarketLink for Women Artisans</p>
+          <h1 className="seller-brand-title">Handora</h1>
+          <p className="seller-brand-sub">Hand Made Haven</p>
         </div>
 
-        {/* Card */}
         <div className="seller-card">
-          <h2 className="seller-card-title">Welcome back! 👋</h2>
-          <p className="seller-card-sub">Sign in to your seller account</p>
+          <div className="seller-card-eyebrow">Seller Portal</div>
+          <h2 className="seller-card-title">Welcome back</h2>
+          <p className="seller-card-sub">Sign in to your artisan seller account</p>
 
           {error && <div className="seller-alert error">⚠ {error}</div>}
 
@@ -75,7 +108,7 @@ export default function SellerLogin() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="seller-btn-primary" style={{ marginTop: '1.25rem' }}>
+            <button type="submit" disabled={loading} className="seller-btn-primary" style={{ marginTop: '1.5rem' }}>
               {loading ? <><span className="spinner" /> Signing in…</> : 'Login to Dashboard →'}
             </button>
           </form>

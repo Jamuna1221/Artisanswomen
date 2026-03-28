@@ -1,0 +1,148 @@
+/* =============================================
+   REVIEWS PAGE — Warm artisan testimonial style
+   Uses seller.css variables exclusively
+   ============================================= */
+
+@keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+@keyframes fadeUp  { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fillBar { from{width:0} }
+
+.reviews-page { animation: fadeIn 0.4s ease-out; }
+
+/* ── Header ── */
+.reviews-header { margin-bottom: 1.75rem; animation: fadeUp 0.4s ease both; }
+.reviews-title {
+  font-family: var(--font-display);
+  font-size: 2rem; font-weight: 600; color: var(--ink); margin: 0 0 0.2rem; line-height: 1.1;
+}
+.reviews-sub { font-family: var(--font-ui); font-size: 0.83rem; color: var(--smoke); margin: 0; }
+
+/* ── Summary card ── */
+.reviews-summary {
+  background: var(--white); border: 1px solid var(--parchment);
+  border-radius: 22px; padding: 2rem 2.25rem;
+  display: flex; gap: 2.5rem; margin-bottom: 2rem;
+  box-shadow: var(--shadow-soft);
+  animation: fadeUp 0.4s ease both; animation-delay: 0.05s;
+}
+
+.reviews-summary__avg {
+  display: flex; align-items: center; gap: 1.25rem; flex-shrink: 0;
+  padding-right: 2.5rem; border-right: 1px solid var(--parchment);
+}
+.reviews-avg-number {
+  font-family: var(--font-display);
+  font-size: 4rem; font-weight: 600; color: var(--ink); line-height: 1;
+}
+.reviews-rating-bar { display: flex; gap: 3px; margin-bottom: 5px; }
+.reviews-avg-label {
+  font-family: var(--font-ui); font-size: 0.76rem; color: var(--smoke); margin-top: 3px;
+}
+
+.reviews-summary__breakdown {
+  flex: 1; display: flex; flex-direction: column;
+  gap: 8px; justify-content: center;
+}
+.reviews-breakdown-row { display: flex; align-items: center; gap: 0.75rem; }
+.reviews-breakdown-star {
+  font-family: var(--font-ui); font-size: 0.75rem; color: var(--smoke);
+  font-weight: 700; width: 28px; text-align: right; flex-shrink: 0;
+}
+.reviews-breakdown-track {
+  flex: 1; height: 8px; background: var(--cream-dark);
+  border-radius: 4px; overflow: hidden;
+}
+.reviews-breakdown-fill {
+  height: 100%; background: var(--gold);
+  border-radius: 4px;
+  animation: fillBar 0.8s ease both;
+}
+.reviews-breakdown-count {
+  font-family: var(--font-ui); font-size: 0.75rem; color: var(--smoke);
+  width: 18px; text-align: right; font-weight: 600; flex-shrink: 0;
+}
+
+/* ── Review list ── */
+.reviews-list {
+  display: flex; flex-direction: column; gap: 1rem;
+  animation: fadeUp 0.4s ease both; animation-delay: 0.1s;
+}
+
+.review-card {
+  background: var(--white); border: 1px solid var(--parchment);
+  border-radius: 18px; padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-soft); transition: box-shadow 0.22s, transform 0.22s;
+  position: relative; overflow: hidden;
+}
+.review-card::before {
+  content: '"';
+  position: absolute; top: 0.5rem; right: 1.25rem;
+  font-family: var(--font-display); font-size: 5rem; font-weight: 700;
+  color: var(--cream-dark); line-height: 1; pointer-events: none;
+}
+.review-card:hover { box-shadow: var(--shadow-card); transform: translateY(-2px); }
+
+.review-card__head {
+  display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;
+}
+.review-card__avatar {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--clay), var(--clay-dark));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-ui); font-size: 0.95rem; font-weight: 700;
+  color: var(--white); flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(192,82,42,0.25);
+}
+.review-card__buyer {
+  font-family: var(--font-ui); font-weight: 700; color: var(--ink); font-size: 0.92rem;
+}
+.review-card__product {
+  font-family: var(--font-ui); font-size: 0.76rem; color: var(--teal);
+  font-weight: 600; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.review-card__meta { margin-left: auto; text-align: right; flex-shrink: 0; }
+.review-card__date {
+  font-family: var(--font-ui); font-size: 0.72rem; color: var(--smoke);
+  margin-top: 4px; display: block;
+}
+
+.review-card__text {
+  font-family: var(--font-ui); font-size: 0.9rem; color: var(--bark);
+  line-height: 1.7; font-style: italic; margin-bottom: 1rem;
+  padding-left: 1rem; border-left: 3px solid var(--parchment);
+}
+
+/* Existing reply */
+.review-card__reply {
+  display: flex; gap: 0.65rem;
+  background: var(--teal-pale); border: 1px solid #a8d8d0;
+  border-radius: 12px; padding: 0.8rem 1rem;
+  font-family: var(--font-ui); font-size: 0.83rem; color: var(--ink);
+  align-items: flex-start;
+}
+.review-card__reply strong { display: block; margin-bottom: 3px; color: var(--teal-dark); }
+
+/* Reply form */
+.review-card__reply-form { display: flex; flex-direction: column; gap: 0.5rem; }
+.review-card__reply-input {
+  width: 100%; padding: 0.65rem 0.9rem;
+  border: 1.5px solid var(--parchment); border-radius: 12px;
+  font-family: var(--font-ui); font-size: 0.86rem; color: var(--ink);
+  background: var(--cream); resize: none; outline: none; transition: all 0.2s;
+}
+.review-card__reply-input:focus {
+  border-color: var(--teal); background: var(--white);
+  box-shadow: 0 0 0 3px rgba(45,140,122,0.1);
+}
+.review-card__reply-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  align-self: flex-end; padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  color: var(--white); border: none; border-radius: 10px;
+  font-family: var(--font-ui); font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: opacity 0.2s;
+  box-shadow: 0 3px 10px rgba(45,140,122,0.25);
+}
+.review-card__reply-btn:hover { opacity: 0.88; }
+
+@media (max-width: 640px) { .reviews-summary { flex-direction: column; gap: 1.5rem; } }

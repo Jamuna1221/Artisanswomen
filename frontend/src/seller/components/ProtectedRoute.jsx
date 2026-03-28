@@ -11,8 +11,8 @@ const ProtectedRoute = ({ children, requireApproved = false }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#C05641] border-t-transparent" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div className="spinner dark" style={{ width: 40, height: 40, borderWidth: 3 }} />
       </div>
     );
   }

@@ -1,0 +1,112 @@
+/* =============================================
+   ORDERS PAGE — Card-row layout with teal accents
+   Uses seller.css variables exclusively
+   ============================================= */
+
+@keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+@keyframes fadeUp  { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+
+.orders-page { animation: fadeIn 0.4s ease-out; }
+
+/* ── Header ── */
+.orders-header { margin-bottom: 1.75rem; animation: fadeUp 0.4s ease both; }
+.orders-title {
+  font-family: var(--font-display);
+  font-size: 2rem; font-weight: 600; color: var(--ink); margin: 0 0 0.2rem; line-height: 1.1;
+}
+.orders-sub { font-family: var(--font-ui); font-size: 0.83rem; color: var(--smoke); margin: 0; }
+
+/* ── Filter tabs ── */
+.orders-summary {
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+  margin-bottom: 1.25rem; animation: fadeUp 0.4s ease both; animation-delay: 0.05s;
+}
+.orders-filter-tab {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 1rem; border: 1.5px solid var(--parchment);
+  border-radius: 30px; background: var(--white); color: var(--smoke);
+  font-family: var(--font-ui); font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.orders-filter-tab:hover { background: var(--cream); border-color: var(--bark-light); color: var(--bark); }
+.orders-filter-tab--active {
+  background: var(--ink); color: var(--white); border-color: var(--ink);
+  box-shadow: 0 4px 12px rgba(26,18,8,0.2);
+}
+
+/* ── Search ── */
+.orders-search-bar {
+  position: relative; margin-bottom: 1.5rem;
+  animation: fadeUp 0.4s ease both; animation-delay: 0.1s;
+}
+.orders-search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--smoke); }
+.orders-search-input {
+  width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
+  border: 1.5px solid var(--parchment); border-radius: 14px;
+  font-family: var(--font-ui); font-size: 0.87rem; color: var(--ink);
+  background: var(--white); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.orders-search-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(45,140,122,0.1);
+}
+
+/* ── Table wrapper → now styled as card rows ── */
+.orders-table-wrap {
+  background: var(--white); border-radius: 20px;
+  border: 1px solid var(--parchment); overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  animation: fadeUp 0.4s ease both; animation-delay: 0.15s;
+}
+.orders-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 0.86rem; }
+.orders-table th {
+  text-align: left; padding: 0.75rem 1.25rem;
+  font-size: 0.67rem; color: var(--smoke); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  background: var(--cream); border-bottom: 1px solid var(--parchment);
+  white-space: nowrap;
+}
+.orders-table td {
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--cream-dark); color: var(--bark);
+  transition: background 0.15s;
+}
+.orders-table tr:last-child td { border-bottom: none; }
+.orders-table tr:hover td { background: var(--cream); }
+
+.orders-id { font-weight: 700; color: var(--teal); white-space: nowrap; font-size: 0.84rem; }
+.orders-product { font-weight: 600; color: var(--ink); max-width: 200px; }
+.orders-city { color: var(--smoke); font-size: 0.8rem; }
+.orders-date { color: var(--smoke); font-size: 0.8rem; white-space: nowrap; }
+.orders-amount { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--clay); }
+
+/* ── Status pills ── */
+.orders-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 0.28rem 0.75rem; border-radius: 20px;
+  font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+}
+.orders-pill--pending   { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.orders-pill--shipped   { background: var(--teal-pale); color: var(--teal-dark); border: 1px solid #a8d8d0; }
+.orders-pill--delivered { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.orders-pill--cancelled { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* ── Action buttons ── */
+.orders-ship-btn,
+.orders-deliver-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 0.35rem 0.75rem; border-radius: 8px;
+  font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700;
+  cursor: pointer; border: 1.5px solid; transition: all 0.18s;
+}
+.orders-ship-btn    { background: var(--teal-pale); color: var(--teal-dark); border-color: #a8d8d0; }
+.orders-ship-btn:hover { background: var(--teal); color: var(--white); border-color: var(--teal); }
+.orders-deliver-btn { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.orders-deliver-btn:hover { background: #059669; color: var(--white); border-color: #059669; }
+.orders-done-label { color: var(--smoke); font-size: 0.85rem; }
+
+.orders-empty {
+  text-align: center; padding: 3rem;
+  color: var(--smoke); font-family: var(--font-ui); font-size: 0.9rem;
+}

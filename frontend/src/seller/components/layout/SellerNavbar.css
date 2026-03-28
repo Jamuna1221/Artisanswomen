@@ -1,0 +1,119 @@
+/* ======================================================
+   SELLER NAVBAR — topbar
+   ====================================================== */
+
+.s-navbar {
+  height: 64px;
+  background: #fff;
+  border-bottom: 1px solid #EFE8DC;
+  padding: 0 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(74, 55, 40, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.s-navbar__page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.s-navbar__page-emoji {
+  font-size: 1.25rem;
+}
+
+.s-navbar__page-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #4A3728;
+  margin: 0;
+}
+
+.s-navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.s-navbar__bell {
+  position: relative;
+  background: #FBF6E9;
+  border: 1px solid #EFE8DC;
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #8C7B6E;
+  transition: background 0.2s, color 0.2s;
+}
+
+.s-navbar__bell:hover {
+  background: #C05641;
+  color: #fff;
+  border-color: #C05641;
+}
+
+.s-navbar__bell-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  background: #C05641;
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+}
+
+.s-navbar__bell:hover .s-navbar__bell-dot {
+  background: #fff;
+}
+
+.s-navbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.s-navbar__avatar {
+  width: 36px;
+  height: 36px;
+  background: #C05641;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.s-navbar__user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.s-navbar__user-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #4A3728;
+  line-height: 1.2;
+}
+
+.s-navbar__user-label {
+  font-size: 0.7rem;
+  color: #8C7B6E;
+}
+
+@media (max-width: 480px) {
+  .s-navbar__user-info { display: none; }
+  .s-navbar { padding: 0 1rem; }
+}
