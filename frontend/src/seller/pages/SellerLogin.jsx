@@ -17,8 +17,8 @@ export default function SellerLogin() {
     setLoading(true);
     try {
       const res = await api.post('/auth/login', form);
-      const { token, name, email, verificationStatus } = res.data;
-      login(token, { name, email, verificationStatus });
+      const { token, _id, name, email, verificationStatus } = res.data;
+      login(token, { _id, name, email, verificationStatus });
       navigate(verificationStatus === 'Approved' ? '/seller/dashboard' : '/seller/pending');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');

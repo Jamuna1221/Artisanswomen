@@ -37,7 +37,7 @@ export const getAdminActivity = async () => {
 
 // Notifications
 export const getAdminNotifications = async () => {
-  const { data } = await api.get('/auth/notifications');
+  const { data } = await api.get('/notifications/admin/all', { baseURL: 'http://localhost:5000/api' });
   return data;
 };
 

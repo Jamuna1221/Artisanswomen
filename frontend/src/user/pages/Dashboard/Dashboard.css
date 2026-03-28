@@ -731,6 +731,41 @@
   .acc-card { padding: 1.35rem 1.25rem 1.25rem; }
 }
 
+/* ── Loading screen ──────────────────────────────────────────── */
+.acc-loading-screen,
+.acc-error-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--cream);
+  gap: 1.25rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.acc-loading-screen p,
+.acc-error-screen p {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--text-soft);
+  font-size: 1.05rem;
+}
+
+.acc-loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--beige);
+  border-top-color: var(--brown);
+  border-radius: 50%;
+  animation: accSpin 0.8s linear infinite;
+}
+
+@keyframes accSpin {
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 400px) {
   .acc-stats-strip { flex-direction: column; gap: 0.75rem; text-align: center; }
   .acc-stat-divider { display: none; }

@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./SignIn.css";
+
+// Relative path — Vite proxy forwards /api/* → http://localhost:5000
+// (see vite.config.js: proxy['/api'] → 'http://127.0.0.1:5000')
+const API_BASE = import.meta.env.VITE_API_URL || "";
 
 const EyeIcon = ({ open }) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -103,9 +108,11 @@ export default function SignIn() {
   const [mode, setMode] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    email: "", password: "", firstName: "", lastName: ""
+    email: "", password: "", firstName: "", lastName: "",
+    gender: "", phone: "", city: "", state: "", age: "", bio: "",
   });
 
   const isSignUp = mode === "signup";
@@ -114,6 +121,7 @@ export default function SignIn() {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
+    if (serverError) setServerError("");
   };
 
   const validate = () => {
@@ -124,26 +132,106 @@ export default function SignIn() {
     else if (form.password.length < 6) newErrors.password = "Min 6 characters";
     if (isSignUp) {
       if (!form.firstName) newErrors.firstName = "Required";
-      if (!form.lastName) newErrors.lastName = "Required";
+      if (!form.lastName)  newErrors.lastName  = "Required";
+      if (!form.gender)    newErrors.gender    = "Gender is required";
     }
     return newErrors;
+  };
+
+  /* ── Sign Up: register buyer → redirect to dashboard ── */
+  const handleSignUp = async () => {
+    setLoading(true);
+    setServerError("");
+    try {
+      const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`;
+      const payload = {
+        name:     fullName,
+        email:    form.email.trim(),
+        password: form.password,
+        gender:   form.gender,
+        phone:    form.phone.trim()  || undefined,
+        city:     form.city.trim()   || undefined,
+        state:    form.state.trim()  || undefined,
+        age:      form.age ? Number(form.age) : undefined,
+        bio:      form.bio.trim()    || undefined,
+      };
+
+      const res = await axios.post(`${API_BASE}/api/buyer/register`, payload);
+      console.log('Signup API Response:', res.data); // Debugging
+
+      if (res.data.success) {
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+        }
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+        }
+        // Direct redirect upon signup completion to account dashboard
+        navigate("/account");
+      }
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setServerError(error.response.data.message);
+      } else {
+        setServerError("Network error. Please check your connection.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ── Sign In: call buyer login → store token → redirect to dashboard ── */
+  const handleSignIn = async () => {
+    setLoading(true);
+    setServerError("");
+    try {
+      const payload = {
+        email:    form.email.trim(),
+        password: form.password,
+      };
+
+      const res = await axios.post(`${API_BASE}/api/buyer/login`, payload);
+      console.log('Login API Response:', res.data); // Debugging Checks
+
+      if (res.data.success) {
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+        }
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+        }
+        navigate("/account");
+      }
+    } catch (error) {
+       if (error.response && error.response.data && error.response.data.message) {
+         setServerError(error.response.data.message);
+       } else {
+         setServerError("Network error. Please check your connection.");
+       }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newErrors = validate();
     if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/account");
-    }, 1800);
+    if (isSignUp) {
+      handleSignUp();
+    } else {
+      handleSignIn();
+    }
   };
 
   const switchMode = () => {
     setMode(prev => prev === "signin" ? "signup" : "signin");
     setErrors({});
-    setForm({ email: "", password: "", firstName: "", lastName: "" });
+    setServerError("");
+    setForm({
+      email: "", password: "", firstName: "", lastName: "",
+      gender: "", phone: "", city: "", state: "", age: "", bio: "",
+    });
   };
 
   return (
@@ -225,6 +313,98 @@ export default function SignIn() {
               </div>
             </div>
 
+            {/* Signup-only fields: gender (required) + optional details */}
+            <div className={`auth-signup-section ${isSignUp ? "visible" : ""}`}>
+              {/* Gender */}
+              <div className="auth-field">
+                <label className="auth-label">
+                  Gender <span style={{ color: "var(--error)" }}>*</span>
+                </label>
+                <select
+                  className={`auth-input ${errors.gender ? "error" : ""}`}
+                  name="gender"
+                  value={form.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select gender…</option>
+                  <option value="Woman">Woman</option>
+                  <option value="Transwoman">Transwoman</option>
+                </select>
+                {errors.gender && (
+                  <span className="auth-error">{errors.gender}</span>
+                )}
+              </div>
+
+              {/* City + State */}
+              <div className="auth-two-col">
+                <div className="auth-field">
+                  <label className="auth-label">City</label>
+                  <input
+                    className="auth-input"
+                    name="city"
+                    value={form.city}
+                    onChange={handleChange}
+                    placeholder="Mumbai"
+                    autoComplete="address-level2"
+                  />
+                </div>
+                <div className="auth-field">
+                  <label className="auth-label">State</label>
+                  <input
+                    className="auth-input"
+                    name="state"
+                    value={form.state}
+                    onChange={handleChange}
+                    placeholder="Maharashtra"
+                    autoComplete="address-level1"
+                  />
+                </div>
+              </div>
+
+              {/* Phone + Age */}
+              <div className="auth-two-col">
+                <div className="auth-field">
+                  <label className="auth-label">Phone (optional)</label>
+                  <input
+                    className="auth-input"
+                    name="phone"
+                    type="tel"
+                    value={form.phone}
+                    onChange={handleChange}
+                    placeholder="+91 98765 43210"
+                    autoComplete="tel"
+                  />
+                </div>
+                <div className="auth-field">
+                  <label className="auth-label">Age (optional)</label>
+                  <input
+                    className="auth-input"
+                    name="age"
+                    type="number"
+                    min="18"
+                    max="100"
+                    value={form.age}
+                    onChange={handleChange}
+                    placeholder="25"
+                  />
+                </div>
+              </div>
+
+              {/* Bio */}
+              <div className="auth-field">
+                <label className="auth-label">About you (optional)</label>
+                <textarea
+                  className="auth-textarea"
+                  name="bio"
+                  value={form.bio}
+                  onChange={handleChange}
+                  placeholder="I love supporting women artisans…"
+                  rows={2}
+                  maxLength={300}
+                />
+              </div>
+            </div>
+
             {/* Email */}
             <div className="auth-field">
               <label className="auth-label">Email Address</label>
@@ -278,6 +458,18 @@ export default function SignIn() {
                 isSignUp ? "Create My Account" : "Sign In"
               )}
             </button>
+
+            {/* ── Server-level error (wrong creds, email taken, etc.) ── */}
+            {serverError && (
+              <div className="auth-server-error">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                {serverError}
+              </div>
+            )}
           </form>
 
           <div className="auth-divider">

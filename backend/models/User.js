@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String }, // set during registration
     age: { type: Number },
-    gender: { type: String, enum: ["Women", "Transwomen"] },
+    gender: { type: String, enum: ["Women", "Transwomen", "Woman", "Transwoman"] },
     aadhaarNumber: { type: String },
     phone: { type: String },
 
@@ -43,6 +43,20 @@ const userSchema = new mongoose.Schema(
       contentType: { type: String },
       idProofType: { type: String }, // e.g. "Aadhaar", "PAN", "Passport", etc.
     },
+    businessProofFile: {
+      data: { type: Buffer },
+      contentType: { type: String },
+    },
+    addressProofFile: {
+      data: { type: Buffer },
+      contentType: { type: String },
+    },
+    productImages: [
+      {
+        data: { type: Buffer },
+        contentType: { type: String },
+      }
+    ],
 
     // --- Verification ---
     isVerified: { type: Boolean, default: false },

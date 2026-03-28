@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const ArtisanProfile = require("../models/ArtisanProfile");
 const { sendApprovalEmail, sendRejectionEmail } = require("../utils/sendEmail");
+const { createSellerNotification } = require("../utils/notificationHelper");
 
 const getArtisans = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ const getArtisans = async (req, res) => {
 
     const total = await User.countDocuments(filter);
     const artisans = await User.find(filter)
-      .select("-password")
+      .select("-password -profileImage.data -idProofFile.data -artisanCardFile.data -businessProofFile.data -addressProofFile.data -productImages.data")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
@@ -84,7 +85,7 @@ const approveSeller = async (req, res) => {
     user.isVerified = true;
     user.approvedAt = new Date();
     user.status = "active"; // Ensure active status
-    
+
     // Send email
     try {
       await sendApprovalEmail(user.email, user.name);
@@ -102,6 +103,8 @@ const approveSeller = async (req, res) => {
       { verificationStatus: "Verified", isVerified: true }
     );
 
+    await createSellerNotification(user._id, "Application Approved", "Congratulations! Your artisan account has been approved. You now have full access to your Seller Dashboard.", "approval", "important");
+
     res.json({ message: "Seller approved successfully", user });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -118,7 +121,7 @@ const rejectSeller = async (req, res) => {
     user.isVerified = false;
     user.rejectionReason = reason || "Does not meet our criteria for a seller account.";
     user.rejectedAt = new Date();
-    
+
     // Send email
     try {
       await sendRejectionEmail(user.email, user.name, user.rejectionReason);
@@ -133,6 +136,8 @@ const rejectSeller = async (req, res) => {
       { userId: user._id },
       { verificationStatus: "Rejected", isVerified: false }
     );
+
+    await createSellerNotification(user._id, "Application Rejected", user.rejectionReason, "rejection", "important");
 
     res.json({ message: "Seller rejected successfully", user });
   } catch (err) {
