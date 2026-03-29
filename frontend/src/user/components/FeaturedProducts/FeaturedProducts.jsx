@@ -1,115 +1,64 @@
-import React, { useState } from 'react'
-import { products } from '../../data'
-import './FeaturedProducts.css'
+import { useEffect, useState, useCallback } from "react";
+import ProductCard from "../ProductCard/ProductCard";
+import { fetchMarketplaceProducts } from "../../services/productService";
+import "./FeaturedProducts.css";
 
-const badgeColors = {
-  'Best Seller': { bg: '#7C3A2D', color: '#FFFDF9' },
-  'New Arrival': { bg: '#C9924A', color: '#FFFDF9' },
-  'Handpicked': { bg: '#4A3728', color: '#FFFDF9' },
-  'Limited Edition': { bg: '#5A2820', color: '#FFFDF9' },
-  'Artisan Pick': { bg: '#7A5C45', color: '#FFFDF9' },
-}
-
-function StarRating({ rating }) {
-  return (
-    <div className="stars">
-      {[1, 2, 3, 4, 5].map(s => (
-        <span key={s} className={`star ${s <= Math.floor(rating) ? 'star--full' : s - 0.5 <= rating ? 'star--half' : 'star--empty'}`}>★</span>
-      ))}
-      <span className="rating-val">{rating}</span>
-    </div>
-  )
-}
-
-function ProductCard({ product, index }) {
-  const [wishlisted, setWishlisted] = useState(false)
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : null
-
-  return (
-    <div className="product-card" style={{ '--delay': `${index * 0.08}s` }}>
-      <div className="product-card__img-wrap">
-        <img src={product.image} alt={product.name} className="product-card__img" loading="lazy" />
-
-        {product.badge && (
-          <span
-            className="product-card__badge"
-            style={badgeColors[product.badge] ? { background: badgeColors[product.badge].bg, color: badgeColors[product.badge].color } : {}}
-          >
-            {product.badge}
-          </span>
-        )}
-
-        {discount && (
-          <span className="product-card__discount">−{discount}%</span>
-        )}
-
-        <button
-          className={`product-card__wishlist ${wishlisted ? 'product-card__wishlist--active' : ''}`}
-          onClick={() => setWishlisted(!wishlisted)}
-          aria-label="Toggle wishlist"
-        >
-          <svg viewBox="0 0 24 24" fill={wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
-        </button>
-
-        <div className="product-card__quick-add">
-          <button className="quick-add-btn">Quick Add to Cart</button>
-        </div>
-      </div>
-
-      <div className="product-card__body">
-        <div className="product-card__artisan">
-          <span className="artisan-dot" />
-          <span>{product.artisan} · {product.location}</span>
-        </div>
-
-        <h3 className="product-card__name">{product.name}</h3>
-
-        <StarRating rating={product.rating} />
-        <span className="product-card__reviews">({product.reviews} reviews)</span>
-
-        <div className="product-card__price-row">
-          <span className="product-card__price">₹{product.price.toLocaleString('en-IN')}</span>
-          {product.originalPrice && (
-            <span className="product-card__original">₹{product.originalPrice.toLocaleString('en-IN')}</span>
-          )}
-        </div>
-
-        <button className="product-card__cta">Add to Cart</button>
-      </div>
-    </div>
-  )
-}
+/** Must match Category.name in MongoDB (case-sensitive). Seed: npm run seed:categories */
+export const MARKETPLACE_CATEGORIES = [
+  "All",
+  "Fashion",
+  "Jewelry",
+  "Handmade",
+  "Home Decor",
+  "Crafts",
+];
 
 export default function FeaturedProducts() {
-  const [filter, setFilter] = useState('All')
-  const filters = ['All', 'Silk Sarees', 'Tanjore Paintings', 'Terracotta Art', 'Jewellery']
+  const [filter, setFilter] = useState("All");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const filtered = filter === 'All' ? products : products.filter(p => p.category === filter)
+  const load = useCallback(async (category) => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchMarketplaceProducts(category);
+      setProducts(Array.isArray(data.products) ? data.products : []);
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Something went wrong.");
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load(filter);
+  }, [filter, load]);
 
   return (
     <section className="featured-products">
-      {/* Background texture */}
       <div className="fp-bg" />
 
       <div className="container">
         <div className="section-header">
           <p className="section-label">Curated for You</p>
-          <h2 className="section-title">Featured Creations</h2>
+          <h2 className="section-title">Featured Artisan Picks</h2>
           <p className="section-subtitle">
-            Each piece handpicked from our artisan network — authentic, ethically sourced, and made with generations of skill.
+            Discover handcrafted pieces from verified women artisans — every listing is loaded from our live marketplace catalog.
           </p>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="fp-filters">
-          {filters.map(f => (
+        <div className="fp-filters" role="tablist" aria-label="Filter by category">
+          {MARKETPLACE_CATEGORIES.map((f) => (
             <button
               key={f}
-              className={`fp-filter ${filter === f ? 'fp-filter--active' : ''}`}
+              type="button"
+              role="tab"
+              aria-selected={filter === f}
+              className={`fp-filter ${filter === f ? "fp-filter--active" : ""}`}
               onClick={() => setFilter(f)}
             >
               {f}
@@ -117,16 +66,44 @@ export default function FeaturedProducts() {
           ))}
         </div>
 
-        <div className="fp-grid">
-          {filtered.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {error && (
+          <div className="fp-error" role="alert">
+            {error}
+          </div>
+        )}
+
+        {loading && (
+          <div className="fp-loading">
+            <span className="fp-spinner" aria-hidden />
+            <span>Loading products…</span>
+          </div>
+        )}
+
+        {!loading && !error && products.length === 0 && (
+          <div className="fp-empty">
+            <p>No products found</p>
+            <span className="fp-empty-hint">
+              {filter === "All"
+                ? "Check back soon — artisans are adding new pieces."
+                : `No listings in “${filter}” yet. Try another category.`}
+            </span>
+          </div>
+        )}
+
+        {!loading && products.length > 0 && (
+          <div className="fp-grid">
+            {products.map((product, i) => (
+              <ProductCard key={product._id || i} product={product} index={i} />
+            ))}
+          </div>
+        )}
 
         <div className="fp-bottom">
-          <a href="#" className="btn-outline-clay">View All Products</a>
+          <a href="/categories" className="btn-outline-clay">
+            View All Categories
+          </a>
         </div>
       </div>
     </section>
-  )
+  );
 }

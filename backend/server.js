@@ -9,6 +9,7 @@ const { init: initSocket } = require("./config/socket");
 
 const authRoutes = require("./routes/auth");
 const buyerRoutes = require("./routes/buyerRoutes");
+const marketplaceProductRoutes = require("./routes/marketplaceProductRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const verificationRoutes = require("./routes/verificationRoutes");
@@ -64,6 +65,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/seller/settings", sellerSettingsRoutes);
 app.use("/api/buyer", buyerRoutes);
+app.use("/api/products", marketplaceProductRoutes);
 app.use("/api/community/groups", communityChatRoutes);
 app.use("/api/help", helpRoutes);
 app.use("/api/account", accountRoutes);
