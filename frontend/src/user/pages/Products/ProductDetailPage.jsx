@@ -15,8 +15,12 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [related, setRelated] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [reviewSummary, setSummary] = useState({ average: 0, count: 0, stars: {} });
+  const [reviewSummary, setSummary] = useState({ average: 0, count: 0, stars: {5:0,4:0,3:0,2:0,1:0} });
   const [activeImg, setActiveImg] = useState(0);
+
+  // Variant selections
+  const [selectedSize, setSize] = useState(null);
+  const [selectedColor, setColor] = useState(null);
 
   // Review Form state
   const [rating, setRating] = useState(5);
@@ -36,25 +40,24 @@ const ProductDetailPage = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/marketplace/${id}`);
+      const res = await axios.get(`/api/products/${id}`);
       setProduct(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+      if (res.data.sizes?.length > 0) setSize(res.data.sizes[0]);
+      if (res.data.colors?.length > 0) setColor(res.data.colors[0]);
+    } catch (err) { console.error(err); } 
+    finally { setLoading(false); }
   };
 
   const fetchRelated = async () => {
     try {
-      const res = await axios.get(`/api/marketplace/${id}/related`);
+      const res = await axios.get(`/api/products/${id}/related`);
       setRelated(res.data);
     } catch (err) { console.error(err); }
   };
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(`/api/reviews/${id}`);
+      const res = await axios.get(`/api/products/${id}/reviews`);
       setReviews(res.data.reviews);
       setSummary(res.data.summary);
     } catch (err) { console.error(err); }
@@ -62,148 +65,177 @@ const ProductDetailPage = () => {
 
   const submitReview = async (e) => {
     e.preventDefault();
-    if (!token) return navigate("/signin");
+    if (!token) return navigate(`/signin?redirect=/product/${id}`);
     try {
       setSubmitting(true);
-      await axios.post("/api/reviews", { productId: id, rating, comment }, {
+      await axios.post(`/api/products/reviews`, { productId: id, rating, comment }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComment("");
-      fetchReviews(); // Refresh
-      alert("Review submitted! Thank you.");
+      fetchReviews();
+      alert("Review posted successfully!");
     } catch (err) {
       alert(err.response?.data?.message || "Review failed");
-    } finally {
-      setSubmitting(false);
-    }
+    } finally { setSubmitting(false); }
   };
 
-  if (loading) return <div className="product-detail-loader"><div className="spin"></div><p>Searching for your treasure...</p></div>;
-  if (!product) return <div className="product-detail-error">Product not found.</div>;
+  const handleAddToCart = () => {
+    addToCart(product, 1, selectedSize, selectedColor);
+    alert(`${product.title} added to your bag!`);
+  };
+
+  const handleBuyNow = () => {
+    addToCart(product, 1, selectedSize, selectedColor);
+    navigate("/checkout");
+  };
+
+  if (loading) return <div className="pd-loader"><div className="spinner"></div></div>;
+  if (!product) return <div className="pd-error">Product not found.</div>;
 
   const discount = product.mrp ? Math.round(((product.mrp - product.price) / product.mrp) * 100) : 0;
-  const isOutOfStock = product.stock <= 0 || product.status === "Out of Stock";
+  const isOutOfStock = product.stock <= 0;
 
   return (
-    <div className="pd-detail-root">
+    <div className="pd-detail-wrapper">
       <Navbar />
       
-      <main className="pd-detail-container container">
-        <div className="pd-detail-layout">
-          {/* Left: Images */}
-          <div className="pd-media-section">
-            <div className="pd-main-img-wrap">
-              <img src={product.images?.[activeImg] || "/placeholder.png"} alt={product.title} />
-              <button 
-                className={`pd-wish-btn ${isInWishlist(product._id) ? "active" : ""}`}
-                onClick={() => toggleWishlist(product)}
-              >
-                {isInWishlist(product._id) ? "♥" : "♡"}
-              </button>
-            </div>
-            {product.images?.length > 1 && (
-              <div className="pd-thumbnails">
-                {product.images.map((img, i) => (
-                  <div 
-                    key={i} 
-                    className={`pd-thumb ${activeImg === i ? "active" : ""}`}
-                    onClick={() => setActiveImg(i)}
-                  >
-                    <img src={img} alt="thumbnail" />
-                  </div>
-                ))}
-              </div>
-            )}
+      <main className="pd-main container">
+        <div className="pd-layout">
+          {/* Left: Photos */}
+          <section className="pd-media">
+             <div className="pd-main-photo">
+                <img src={product.images?.[activeImg] || "/placeholder.png"} alt={product.title} />
+                <button 
+                  className={`pd-fav-btn ${isInWishlist(product._id) ? "active" : ""}`}
+                  onClick={() => toggleWishlist(product)}
+                >
+                  {isInWishlist(product._id) ? "♥" : "♡"}
+                </button>
+             </div>
+             {product.images?.length > 1 && (
+               <div className="pd-gallery">
+                 {product.images.map((img, index) => (
+                   <div 
+                    key={index} 
+                    className={`pd-thumb-wrap ${activeImg === index ? "active" : ""}`}
+                    onClick={() => setActiveImg(index)}
+                   >
+                     <img src={img} alt="thumbnail" />
+                   </div>
+                 ))}
+               </div>
+             )}
+          </section>
 
-            <div className="pd-trust-badges desktop-badges">
-              <div className="trust-item"><span>🚚</span> Fast Delivery</div>
-              <div className="trust-item"><span>🤝</span> Artisan Verified</div>
-              <div className="trust-item"><span>🌿</span> 100% Authentic</div>
-            </div>
-          </div>
-
-          {/* Right: Info */}
-          <div className="pd-info-section">
-            <nav className="pd-breadcrumb">
-              <Link to="/home">Home</Link> / <span>{product.category?.name || "Product"}</span>
+          {/* Right: Specs & Actions */}
+          <section className="pd-content">
+            <nav className="pd-nav-crumb">
+               <Link to="/home">Home</Link> / <span>{product.category?.name || "Marketplace"}</span> / <span>{product.subcategory || "Item"}</span>
             </nav>
-            
-            <h1 className="pd-title">{product.title}</h1>
-            <p className="pd-artisan">Handcrafted by <span>{product.artisanId?.shopName || product.artisanId?.name || "Artisan"}</span></p>
 
-            <div className="pd-rating-strip">
-              <div className="pd-stars">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className={i < Math.floor(product.rating || 0) ? "filled" : ""}>★</span>
-                ))}
+            <h1 className="pd-title-text">{product.title}</h1>
+            <p className="pd-artisan-credit">By <span>{product.artisanId?.shopName || product.artisanId?.name || "Verified Artisan"}</span></p>
+
+            <div className="pd-rating-badge-row">
+               <div className="pd-rating-chip">
+                  {product.rating ? product.rating.toFixed(1) : "0"} ★
+               </div>
+               <span className="pd-review-text">{product.ratingCount || 0} Ratings & {reviews.length} Reviews</span>
+            </div>
+
+            <div className="pd-price-row">
+               <h2 className="pd-live-price">₹{product.price.toLocaleString()}</h2>
+               {discount > 0 && (
+                 <>
+                   <span className="pd-old-price">₹{product.mrp.toLocaleString()}</span>
+                   <span className="pd-off-percent">{discount}% OFF</span>
+                 </>
+               )}
+            </div>
+
+            <div className="pd-delivery-info">
+               <p><span>🚚</span> Fast Delivery by <strong>{product.deliveryEstimate || "3-7 Days"}</strong></p>
+               {isOutOfStock ? (
+                 <span className="pd-oos-text">Out of Stock</span>
+               ) : (
+                 <span className="pd-stock-text">In Stock ({product.stock} available)</span>
+               )}
+            </div>
+
+            {/* Variants */}
+            {product.sizes?.length > 0 && (
+              <div className="pd-variant-group">
+                <h3>Select Size</h3>
+                <div className="pd-variants">
+                   {product.sizes.map(s => (
+                     <button key={s} className={`pd-v-btn ${selectedSize === s ? "active" : ""}`} onClick={() => setSize(s)}>{s}</button>
+                   ))}
+                </div>
               </div>
-              <span className="pd-rating-count">{product.rating ? product.rating.toFixed(1) : "No rating"} | {product.ratingCount || "0"} Reviews</span>
-            </div>
-
-            <div className="pd-price-block">
-              <span className="pd-price">₹{product.price.toLocaleString()}</span>
-              {discount > 0 && (
-                <>
-                  <span className="pd-mrp">₹{product.mrp.toLocaleString()}</span>
-                  <span className="pd-discount">{discount}% OFF</span>
-                </>
-              )}
-            </div>
-
-            {isOutOfStock ? (
-                <div className="pd-oos-badge">Out of Stock</div>
-            ) : (
-                <div className="pd-stock-info">Only {product.stock} items left in stock</div>
             )}
 
-            <div className="pd-actions">
-              <button 
-                className="pd-cart-btn" 
-                onClick={() => addToCart(product)}
-                disabled={isOutOfStock}
-              >
-                Add to Cart
-              </button>
-              <button 
-                className="pd-buy-btn" 
-                onClick={() => { addToCart(product); navigate("/checkout"); }}
-                disabled={isOutOfStock}
-              >
-                Buy Now
-              </button>
+            {product.colors?.length > 0 && (
+              <div className="pd-variant-group">
+                <h3>Select Color</h3>
+                <div className="pd-variants">
+                   {product.colors.map(c => (
+                     <button 
+                      key={c} 
+                      className={`pd-v-btn pd-color-btn ${selectedColor === c ? "active" : ""}`} 
+                      onClick={() => setColor(c)}
+                      style={{ backgroundColor: c.toLowerCase() }}
+                     >
+                       {selectedColor === c && "✓"}
+                     </button>
+                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sticky Actions Container */}
+            <div className="pd-actions-sticky">
+               <button className="pd-btn pd-add-cart" onClick={handleAddToCart} disabled={isOutOfStock}>
+                 Add to Cart
+               </button>
+               <button className="pd-btn pd-buy-now" onClick={handleBuyNow} disabled={isOutOfStock}>
+                 Buy Now
+               </button>
             </div>
 
-            <div className="pd-description">
-              <h3>Product Description</h3>
-              <p>{product.description || "No description provided by the artisan."}</p>
+            <div className="pd-details-box">
+               <h3>Product Description</h3>
+               <p className="pd-short-desc">{product.description}</p>
+               <div className="pd-full-desc">
+                  {product.fullDescription}
+               </div>
             </div>
 
             {product.specifications && Object.keys(product.specifications).length > 0 && (
-              <div className="pd-specs">
-                <h3>Technical Details</h3>
-                <div className="specs-table">
-                  {Object.entries(product.specifications).map(([k, v]) => (
-                    <div key={k} className="spec-row">
-                      <span className="spec-key">{k}</span>
-                      <span className="spec-val">{v}</span>
+              <div className="pd-specs-box">
+                <h3>Specifications</h3>
+                <div className="pd-specs-table">
+                  {Object.entries(product.specifications).map(([key, val]) => (
+                    <div key={key} className="pd-spec-row">
+                       <span className="pd-spec-key">{key}</span>
+                       <span className="pd-spec-val">{val}</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-          </div>
+          </section>
         </div>
 
-        {/* Related Products */}
+        {/* Similar Items */}
         {related.length > 0 && (
-          <section className="pd-related-wrap">
-            <h2>Similar Products You'll Love</h2>
-            <div className="related-grid">
-               {related.map(p => (
-                 <div key={p._id} className="related-card" onClick={() => navigate(`/product/${p._id}`)}>
-                    <img src={p.image} alt={p.name} />
-                    <h4>{p.name}</h4>
-                    <span className="r-price">₹{p.price.toLocaleString()}</span>
+          <section className="pd-related-section">
+            <h2 className="pd-sec-title">Recommended Similar Products</h2>
+            <div className="pd-related-grid">
+               {related.map(r => (
+                 <div key={r._id} className="pd-rel-card" onClick={() => navigate(`/product/${r._id}`)}>
+                    <img src={r.image} alt={r.name} />
+                    <h4>{r.name}</h4>
+                    <div className="pd-rel-price">₹{r.price.toLocaleString()}</div>
                  </div>
                ))}
             </div>
@@ -211,67 +243,74 @@ const ProductDetailPage = () => {
         )}
 
         {/* Reviews Section */}
-        <section className="pd-reviews-section">
-          <h2>Customer Ratings & Reviews</h2>
-          <div className="reviews-layout">
-            <div className="reviews-summary-aside">
-               <div className="summary-left">
-                  <div className="big-rating">{reviewSummary.average}<span>/5</span></div>
-                  <div className="stars-stat">
-                    {Object.entries(reviewSummary.stars).reverse().map(([star, count]) => (
-                      <div key={star} className="star-stat-row">
-                         <span>{star}★</span>
-                         <div className="stat-bar"><div style={{ width: `${(count / reviewSummary.count) * 100}%` }}></div></div>
-                         <span>{count}</span>
+        <section className="pd-reviews-box" id="reviews">
+           <h2 className="pd-sec-title">Ratings & Reviews</h2>
+           <div className="pd-reviews-layout">
+              <aside className="pd-reviews-aside">
+                 <div className="pd-avg-block">
+                    <span className="pd-big-score">{reviewSummary.average}</span>
+                    <span className="pd-total-count">{reviewSummary.count} Ratings</span>
+                 </div>
+                 <div className="pd-stars-breakdown">
+                    {[5, 4, 3, 2, 1].map(s => (
+                      <div key={s} className="pd-star-row">
+                         <span>{s} ★</span>
+                         <div className="pd-progress"><div style={{ width: `${(reviewSummary.stars[s] / reviewSummary.count) * 100}%` }}></div></div>
+                         <span>{reviewSummary.stars[s]}</span>
                       </div>
                     ))}
-                  </div>
-               </div>
-               
-               {token && (
-                 <form className="review-form" onSubmit={submitReview}>
-                    <h3>Post Your Review</h3>
-                    <div className="rate-input">
-                       <span>How would you rate it?</span>
-                       <select value={rating} onChange={(e) => setRating(e.target.value)}>
-                          <option value="5">5 - Excellent</option>
-                          <option value="4">4 - Good</option>
-                          <option value="3">3 - Average</option>
-                          <option value="2">2 - Poor</option>
-                          <option value="1">1 - Terrible</option>
-                       </select>
-                    </div>
-                    <textarea 
-                       placeholder="Write about your experience with this artisan creation..." 
-                       value={comment} 
-                       onChange={(e) => setComment(e.target.value)}
-                       required
-                    />
-                    <button type="submit" disabled={submitting}>
-                       {submitting ? "Placing..." : "Post Review"}
-                    </button>
-                 </form>
-               )}
-            </div>
-
-            <div className="reviews-list">
-               {reviews.length > 0 ? reviews.map(r => (
-                 <div key={r._id} className="review-card">
-                    <div className="rev-header">
-                       <span className="rev-star">{r.rating}★</span>
-                       <p className="rev-comment">{r.comment}</p>
-                    </div>
-                    <div className="rev-footer">
-                       <span className="rev-user">{r.buyerId?.name || "Verified Buyer"}</span>
-                       {r.isVerifiedPurchase && <span className="verified-badge">✓ Verified Purchase</span>}
-                       <span className="rev-date">{new Date(r.createdAt).toLocaleDateString()}</span>
-                    </div>
                  </div>
-               )) : (
-                 <div className="reviews-empty">No reviews yet. Be the first to share your thoughts!</div>
-               )}
-            </div>
-          </div>
+
+                 {token ? (
+                   <form className="pd-review-form" onSubmit={submitReview}>
+                      <h3>Write a Review</h3>
+                      <div className="pd-rate-input">
+                         <label>Rating:</label>
+                         <select value={rating} onChange={(e) => setRating(e.target.value)}>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Average</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="1">1 - Terrible</option>
+                         </select>
+                      </div>
+                      <textarea 
+                        placeholder="Share your thoughts on this artisan masterwork..." 
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        required
+                      />
+                      <button type="submit" disabled={submitting}>
+                        {submitting ? "Posting..." : "Submit Review"}
+                      </button>
+                   </form>
+                 ) : (
+                   <div className="pd-auth-prompt">
+                      Please <Link to="/signin">Login</Link> to write a review.
+                   </div>
+                 )}
+              </aside>
+
+              <div className="pd-reviews-list">
+                 {reviews.length > 0 ? (
+                   reviews.map(rev => (
+                     <div key={rev._id} className="pd-rev-item">
+                        <div className="pd-rev-head">
+                           <span className="pd-rev-score">{rev.rating} ★</span>
+                           <span className="pd-rev-verified">{rev.isVerifiedPurchase ? "✓ Verified Purchase" : ""}</span>
+                        </div>
+                        <p className="pd-rev-comment">{rev.comment}</p>
+                        <div className="pd-rev-foot">
+                           <span className="pd-rev-user">{rev.buyerId?.name || "Customer"}</span>
+                           <span className="pd-rev-date">{new Date(rev.createdAt).toLocaleDateString()}</span>
+                        </div>
+                     </div>
+                   ))
+                 ) : (
+                   <div className="pd-no-revs">No reviews yet. Be the first to share your experience!</div>
+                 )}
+              </div>
+           </div>
         </section>
       </main>
 

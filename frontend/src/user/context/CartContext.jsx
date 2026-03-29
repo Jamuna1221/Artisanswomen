@@ -13,12 +13,9 @@ export const CartProvider = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
-  // Initial Fetch from Backend
   useEffect(() => {
-    if (user && token) {
-      fetchBackendData();
-    } else {
-      // Load from localStorage for guests
+    if (user && token) fetchBackendData();
+    else {
       const savedCart = localStorage.getItem("cart");
       const savedWish = localStorage.getItem("wishlist");
       if (savedCart) setCartItems(JSON.parse(savedCart));
@@ -34,31 +31,24 @@ export const CartProvider = ({ children }) => {
         axios.get("/api/cart", { headers: { Authorization: `Bearer ${token}` } }),
         axios.get("/api/wishlist", { headers: { Authorization: `Bearer ${token}` } })
       ]);
-      
-      // Normalize backend cart items to match frontend expectation
       const normalizedCart = (cartRes.data.items || []).map(item => ({
         ...item.productId,
         quantity: item.quantity,
-        _id: item.productId._id, // Ensure _id is flat
+        selectedSize: item.selectedSize,
+        selectedColor: item.selectedColor,
+        _id: item.productId._id,
         image: item.productId.images?.[0] || item.productId.image
       }));
-      
       setCartItems(normalizedCart);
-      
       const normalizedWish = (wishRes.data || []).map(item => ({
         ...item.productId,
         image: item.productId.images?.[0] || item.productId.image
       }));
       setWishlistItems(normalizedWish);
-      
-    } catch (err) {
-      console.error("CartContext: Fetch failed", err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); } 
+    finally { setLoading(false); }
   };
 
-  // Sync back to local storage for guests
   useEffect(() => {
     if (!token) {
       localStorage.setItem("cart", JSON.stringify(cartItems));
@@ -66,32 +56,35 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems, wishlistItems, token]);
 
-  const addToCart = async (product, qty = 1) => {
+  const addToCart = async (product, qty = 1, size = null, color = null) => {
     if (token) {
       try {
-        const res = await axios.post("/api/cart", { productId: product._id, quantity: qty }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        // Re-fetch or manually update local state
+        const res = await axios.post("/api/cart", { 
+          productId: product._id, 
+          quantity: qty,
+          selectedSize: size,
+          selectedColor: color
+        }, { headers: { Authorization: `Bearer ${token}` } });
         const normalized = res.data.items.map(item => ({
           ...item.productId,
           quantity: item.quantity,
+          selectedSize: item.selectedSize,
+          selectedColor: item.selectedColor,
           _id: item.productId._id,
           image: item.productId.images?.[0] || item.productId.image
         }));
         setCartItems(normalized);
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) { console.error(err); }
     } else {
       setCartItems((prev) => {
-        const existing = prev.find((item) => item._id === product._id);
+        const existing = prev.find((i) => i._id === product._id && i.selectedSize === size && i.selectedColor === color);
         if (existing) {
-          return prev.map((item) =>
-            item._id === product._id ? { ...item, quantity: item.quantity + qty } : item
+          return prev.map((i) =>
+            (i._id === product._id && i.selectedSize === size && i.selectedColor === color) 
+            ? { ...i, quantity: i.quantity + qty } : i
           );
         }
-        return [...prev, { ...product, quantity: qty }];
+        return [...prev, { ...product, quantity: qty, selectedSize: size, selectedColor: color }];
       });
     }
   };
@@ -99,16 +92,8 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = async (id) => {
     if (token) {
         try {
-            const res = await axios.delete(`/api/cart/${id}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            const normalized = res.data.items.map(item => ({
-                ...item.productId,
-                quantity: item.quantity,
-                _id: item.productId._id,
-                image: item.productId.images?.[0] || item.productId.image
-            }));
-            setCartItems(normalized);
+            const res = await axios.delete(`/api/cart/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+            fetchBackendData(); // Re-fetch for safety
         } catch (err) { console.error(err); }
     } else {
         setCartItems((prev) => prev.filter((item) => item._id !== id));
@@ -118,21 +103,11 @@ export const CartProvider = ({ children }) => {
   const updateQuantity = async (id, newQty) => {
     if (token) {
         try {
-            const res = await axios.put(`/api/cart/${id}`, { quantity: newQty }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const normalized = res.data.items.map(item => ({
-                ...item.productId,
-                quantity: item.quantity,
-                _id: item.productId._id,
-                image: item.productId.images?.[0] || item.productId.image
-            }));
-            setCartItems(normalized);
+            await axios.put(`/api/cart/${id}`, { quantity: newQty }, { headers: { Authorization: `Bearer ${token}` } });
+            fetchBackendData();
         } catch (err) { console.error(err); }
     } else {
-        setCartItems((prev) => prev.map((item) => 
-            item._id === id ? { ...item, quantity: Math.max(1, newQty) } : item
-        ));
+        setCartItems((prev) => prev.map((item) => item._id === id ? { ...item, quantity: Math.max(1, newQty) } : item));
     }
   };
 
@@ -142,9 +117,7 @@ export const CartProvider = ({ children }) => {
             await axios.delete("/api/cart", { headers: { Authorization: `Bearer ${token}` } });
             setCartItems([]);
         } catch (err) { console.error(err); }
-    } else {
-        setCartItems([]);
-    }
+    } else { setCartItems([]); }
   };
 
   const toggleWishlist = async (product) => {
@@ -162,8 +135,8 @@ export const CartProvider = ({ children }) => {
         } catch (err) { console.error(err); }
     } else {
         setWishlistItems((prev) => {
-            const existing = prev.find((item) => item._id === product._id);
-            if (existing) return prev.filter((item) => item._id !== product._id);
+            const existing = prev.find((i) => i._id === product._id);
+            if (existing) return prev.filter((i) => i._id !== product._id);
             return [...prev, product];
         });
     }
@@ -173,15 +146,8 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider value={{ 
-      cartItems, 
-      addToCart, 
-      removeFromCart, 
-      updateQuantity, 
-      clearCart,
-      wishlistItems,
-      toggleWishlist,
-      isInWishlist,
-      loading,
+      cartItems, addToCart, removeFromCart, updateQuantity, clearCart,
+      wishlistItems, toggleWishlist, isInWishlist, loading,
       cartCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
       cartTotal: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
     }}>

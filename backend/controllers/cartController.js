@@ -25,18 +25,28 @@ exports.getCart = async (req, res) => {
 exports.addToCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { productId, quantity = 1 } = req.body;
+    const { productId, quantity = 1, selectedSize, selectedColor } = req.body;
 
     let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({ userId, items: [] });
     }
 
-    const index = cart.items.findIndex(item => item.productId.toString() === productId);
+    const index = cart.items.findIndex(item => 
+      item.productId.toString() === productId && 
+      item.selectedSize === selectedSize && 
+      item.selectedColor === selectedColor
+    );
+
     if (index > -1) {
       cart.items[index].quantity += parseInt(quantity);
     } else {
-      cart.items.push({ productId, quantity: parseInt(quantity) });
+      cart.items.push({ 
+        productId, 
+        quantity: parseInt(quantity),
+        selectedSize,
+        selectedColor
+      });
     }
 
     await cart.save();

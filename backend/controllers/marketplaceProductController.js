@@ -48,6 +48,7 @@ const listPublicProducts = async (req, res) => {
         _id: p._id,
         name: p.title,
         price: p.price,
+        mrp: p.mrp || p.price,
         image: p.images?.[0] ?? null,
         images: p.images || [],
         category: p.category?.name ?? null,

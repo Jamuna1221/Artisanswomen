@@ -1,5 +1,6 @@
 const Review = require("../models/Review");
 const Order = require("../models/Order");
+const Product = require("../models/Product");
 
 /**
  * GET /api/reviews/:productId
@@ -38,8 +39,8 @@ exports.submitReview = async (req, res) => {
     const buyerId = req.user.id;
     const { productId, rating, comment } = req.body;
 
-    // Optional: Check if the user really purchased this product
-    const order = await Order.findOne({ buyerId, items: { $elemMatch: { productId } } });
+    // Check if the user purchased this product
+    const order = await Order.findOne({ buyerId, "items.productId": productId });
     const isVerifiedPurchase = !!order;
 
     // Prevent duplicate reviews
@@ -54,6 +55,16 @@ exports.submitReview = async (req, res) => {
       rating: parseInt(rating),
       comment,
       isVerifiedPurchase
+    });
+
+    // RECALCULATE PRODUCT RATING
+    const allReviews = await Review.find({ productId });
+    const count = allReviews.length;
+    const avg = allReviews.reduce((acc, r) => acc + r.rating, 0) / count;
+
+    await Product.findByIdAndUpdate(productId, {
+      rating: avg,
+      ratingCount: count
     });
 
     const populated = await review.populate("buyerId", "name avatar");

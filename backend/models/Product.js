@@ -7,17 +7,21 @@ const productSchema = new mongoose.Schema(
     // Core info
     title: { type: String, required: true, trim: true },
     description: { type: String, trim: true },
+    fullDescription: { type: String, trim: true },
     sku: { type: String, unique: true, sparse: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    subcategory: { type: String, trim: true },
     tags: [String],
 
     // Pricing & inventory
     price: { type: Number, required: true, min: 0 },
-    mrp: { type: Number, min: 0 }, // Discount calculation
+    mrp: { type: Number, min: 0 },
     stock: { type: Number, default: 0, min: 0 },
     
-    // Additional Info (Flipkart Style)
-    subcategory: { type: String, trim: true },
+    // Variants & Logistics
+    colors: [String],
+    sizes: [String],
+    deliveryEstimate: { type: String, default: "3-5 business days" },
     specifications: { type: Map, of: String },
 
     // Images — Cloudinary URLs
