@@ -1,0 +1,80 @@
+/* ─── Category Bar ─────────────────────────────────────────────────────────── */
+.category-bar {
+  background: #fffaf6; /* var(--bg-card) fallback */
+  border-bottom: 1px solid #e8d5c0; /* var(--border) fallback */
+  box-shadow: 0 2px 6px rgba(139, 58, 43, .06);
+  position: sticky;
+  top: 72px; /* Set to match your Navbar height */
+  z-index: 100;
+  width: 100%;
+}
+
+.category-bar__inner {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 20px;
+}
+
+.category-bar__inner::-webkit-scrollbar {
+  display: none;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 20px;
+  border-radius: 0;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  color: #5a3a28; /* var(--text-md) fallback */
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+
+.category-item:hover {
+  background: rgba(139, 58, 43, 0.04);
+  color: #8b3a2b; /* var(--brown) fallback */
+  transform: translateY(-2px);
+}
+
+.category-item--active {
+  border-bottom-color: #8b3a2b; /* var(--brown) */
+  color: #8b3a2b;
+  font-weight: 700;
+  background: rgba(139, 58, 43, 0.06);
+}
+
+.category-icon {
+  font-size: 24px;
+  transition: transform 0.3s;
+}
+
+.category-item:hover .category-icon {
+  transform: scale(1.15) rotate(4deg);
+}
+
+.category-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 768px) {
+  .category-item {
+     padding: 10px 14px;
+  }
+  .category-icon {
+     font-size: 20px;
+  }
+  .category-label {
+     font-size: 11px;
+  }
+}

@@ -16,7 +16,20 @@ import {
 import * as productService from "../../services/sellerProductService";
 import "./ProductsPage.css";
 
-const CATEGORIES = ["Sarees", "Pottery", "Jewellery", "Handicrafts", "Textiles", "Home Decor"];
+const CATEGORIES = [
+  "For You",
+  "Fashion",
+  "Jewelry",
+  "Handmade",
+  "Home Decor",
+  "Crafts",
+  "Textiles",
+  "Pottery",
+  "Paintings",
+  "Bags",
+  "Footwear",
+  "Wellness"
+];
 
 const ProductsPage = () => {
   const navigate = useNavigate();
@@ -106,7 +119,11 @@ const ProductsPage = () => {
       data.append("title", formData.title);
       data.append("price", formData.price);
       data.append("stock", formData.stock);
-      data.append("category", formData.category);
+      let normCat = formData.category;
+      if (normCat === "For You") normCat = "foryou";
+      else normCat = normCat.toLowerCase().replace(/\s+/g, "-");
+      
+      data.append("category", normCat);
       data.append("description", formData.description);
       data.append("status", forceStatus);
 

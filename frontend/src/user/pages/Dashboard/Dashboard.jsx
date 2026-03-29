@@ -1,23 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import Footer from "../../components/Footer/Footer";
 
 // ── Dummy Data ────────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { id: 1, label: "For You", icon: "✨" },
-  { id: 2, label: "Fashion", icon: "👗" },
-  { id: 3, label: "Jewelry", icon: "💍" },
-  { id: 4, label: "Handmade", icon: "🧶" },
-  { id: 5, label: "Home Decor", icon: "🏺" },
-  { id: 6, label: "Crafts", icon: "🎨" },
-  { id: 7, label: "Textiles", icon: "🧵" },
-  { id: 8, label: "Pottery", icon: "🪔" },
-  { id: 9, label: "Paintings", icon: "🖼️" },
-  { id: 10, label: "Bags", icon: "👜" },
-  { id: 11, label: "Footwear", icon: "👡" },
-  { id: 12, label: "Wellness", icon: "🌿" },
-];
+// CATEGORIES shifted to CategoryBar component for reusability.
 
 const BANNERS = [
   {
@@ -49,15 +36,13 @@ const BANNERS = [
   },
 ];
 
-const FEATURED_PRODUCTS = [
+
+// Products are now fetched from the API instead of using dummy data.
+const FEATURED_PRODUCTS_DUMMY = [
   { id: 1, name: "Block Print Kurta Set", price: 1299, mrp: 2199, rating: 4.5, reviews: 328, img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400&q=80", badge: "Bestseller" },
   { id: 2, name: "Brass Oxidised Earrings", price: 499, mrp: 899, rating: 4.7, reviews: 512, img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80", badge: "New" },
   { id: 3, name: "Handwoven Jute Tote", price: 799, mrp: 1299, rating: 4.3, reviews: 194, img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80", badge: "" },
   { id: 4, name: "Madhubani Art Cushion", price: 649, mrp: 999, rating: 4.6, reviews: 87, img: "https://images.unsplash.com/photo-1616046229478-9901c5536a45?w=400&q=80", badge: "Artisan Pick" },
-  { id: 5, name: "Phulkari Dupatta", price: 1599, mrp: 2599, rating: 4.8, reviews: 421, img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=80", badge: "Trending" },
-  { id: 6, name: "Terracotta Diyas Set", price: 349, mrp: 599, rating: 4.4, reviews: 263, img: "https://images.unsplash.com/photo-1603899122634-f086ca5f5ddd?w=400&q=80", badge: "" },
-  { id: 7, name: "Kalamkari Saree", price: 2499, mrp: 3999, rating: 4.9, reviews: 178, img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400&q=80", badge: "Premium" },
-  { id: 8, name: "Hand-painted Pottery", price: 899, mrp: 1499, rating: 4.5, reviews: 305, img: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400&q=80", badge: "" },
 ];
 
 const RECOMMENDED = [
@@ -93,12 +78,20 @@ function Header({ user, cartCount }) {
   const [search, setSearch] = useState("");
   const [dropdown, setDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim()) {
+      navigate(`/products?search=${encodeURIComponent(search.trim())}`);
+    }
+  };
 
   return (
     <header className={`header${scrolled ? " header--scrolled" : ""}`}>
@@ -113,7 +106,7 @@ function Header({ user, cartCount }) {
           </Link>
 
         {/* Search */}
-        <div className="header__search">
+        <form className="header__search" onSubmit={handleSearch}>
           <span className="search-icon">🔍</span>
           <input
             type="text"
@@ -121,8 +114,8 @@ function Header({ user, cartCount }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="search-btn">Search</button>
-        </div>
+          <button type="submit" className="search-btn">Search</button>
+        </form>
 
         {/* Right */}
         <div className="header__right">
@@ -161,24 +154,7 @@ function Header({ user, cartCount }) {
   );
 }
 
-function CategoryBar({ active, onSelect }) {
-  return (
-    <nav className="category-bar">
-      <div className="category-bar__inner">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            className={`category-item${active === cat.id ? " category-item--active" : ""}`}
-            onClick={() => onSelect(cat.id)}
-          >
-            <span className="category-icon">{cat.icon}</span>
-            <span className="category-label">{cat.label}</span>
-          </button>
-        ))}
-      </div>
-    </nav>
-  );
-}
+import CategoryBar from "../../components/CategoryBar/CategoryBar";
 
 function HeroBanner() {
   const [current, setCurrent] = useState(0);
@@ -229,12 +205,13 @@ function HeroBanner() {
 
 function ProductCard({ product }) {
   const [wishlisted, setWishlisted] = useState(false);
-  const off = discount(product.price, product.mrp);
+  const prodImg = product.image || product.img;
+  const off = product.mrp ? discount(product.price, product.mrp) : 25; // Default 25% if mrp missing
 
   return (
     <div className="product-card">
       <div className="product-card__image-wrap">
-        <img src={product.img} alt={product.name} className="product-card__image" />
+        <img src={prodImg} alt={product.name} className="product-card__image" />
         {product.badge && <span className="product-badge">{product.badge}</span>}
         <button
           className={`wishlist-btn${wishlisted ? " wishlisted" : ""}`}
@@ -253,7 +230,7 @@ function ProductCard({ product }) {
         </div>
         <div className="product-pricing">
           <span className="price">₹{product.price.toLocaleString()}</span>
-          <span className="mrp">₹{product.mrp.toLocaleString()}</span>
+          {product.mrp && <span className="mrp">₹{product.mrp.toLocaleString()}</span>}
           <span className="off">{off}% off</span>
         </div>
       </div>
@@ -315,11 +292,15 @@ function BannerStrip() {
   );
 }
 
+import { fetchMarketplaceProducts } from "../../services/productService";
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function Home() {
   const [user, setUser] = useState(null);
   const [activeCategory, setActive] = useState(1);
-  const cartCount = 3; // replace with real cart state
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const cartCount = 0; // replace with real cart logic later
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -329,7 +310,20 @@ export default function Home() {
     } else {
       setUser(null); 
     }
-    // Google Fonts
+
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const { products: fetched } = await fetchMarketplaceProducts();
+        setProducts(fetched);
+      } catch (err) {
+        console.error("Home: fetchMarketplaceProducts failed", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+    
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Nunito:wght@300;400;600;700&display=swap";
@@ -339,12 +333,66 @@ export default function Home() {
   return (
     <div className="home-page">
       <Header user={user} cartCount={cartCount} />
-      <CategoryBar active={activeCategory} onSelect={setActive} />
+      <CategoryBar activeId={activeCategory} />
       <main className="home-main">
-        <HeroBanner />
+        {/* Premium Triple Hero Section */}
+        <section className="triple-hero-grid">
+           <div className="hero-card hero-large">
+              <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1200" alt="Fashion" />
+              <div className="hero-overlay">
+                 <span className="hero-tag">New Season</span>
+                 <h2>Elegant Ethnic Wear</h2>
+                 <Link to="/category/fashion" className="hero-link">Explore Collection →</Link>
+              </div>
+           </div>
+           <div className="hero-side-wrap">
+              <div className="hero-card hero-small">
+                 <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800" alt="Jewellery" />
+                 <div className="hero-overlay">
+                    <h2>Artisan Jewelry</h2>
+                    <Link to="/category/jewelry" className="hero-link">Shop Gold & Art →</Link>
+                 </div>
+              </div>
+              <div className="hero-card hero-small">
+                 <img src="https://images.unsplash.com/photo-1544413647-b510491893e1?auto=format&fit=crop&q=80&w=800" alt="Handmade" />
+                 <div className="hero-overlay">
+                    <h2>Handmade Decor</h2>
+                    <Link to="/category/home-decor" className="hero-link">Art for Home →</Link>
+                 </div>
+              </div>
+           </div>
+        </section>
+
         <BannerStrip />
-        <ProductGrid title="✦ Featured Artisan Picks" products={FEATURED_PRODUCTS} cols={4} />
-        <PersonalisedSection user={user} />
+
+        {loading ? (
+          <div className="loading-state">
+            <p>Curating artisan treasures...</p>
+          </div>
+        ) : products.length > 0 ? (
+          <>
+            <ProductGrid 
+              title="✧ Latest Artisan Creations" 
+              products={products.slice(0, 8)} 
+              cols={4} 
+            />
+            {user && (
+              <section className="personalised-section">
+                <div className="personalised-header">
+                  <h2 className="personalised-title">Recommended For You, {user.name.split(' ')[0]}</h2>
+                </div>
+                <div className="personalised-scroll">
+                  {products.slice(0, 6).map((p) => <ProductCard key={p._id} product={p} />)}
+                </div>
+              </section>
+            )}
+          </>
+        ) : (
+          <div className="empty-home">
+             <h2>No products listed yet</h2>
+             <p>Our artisans are currently crafting new pieces. Check back soon!</p>
+          </div>
+        )}
       </main>
 
       <Footer />

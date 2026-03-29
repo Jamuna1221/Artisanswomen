@@ -1,0 +1,162 @@
+/* Checkout Page CSS */
+.checkout-root {
+  min-height: 100vh;
+  background-color: #f7f7f7;
+}
+
+.checkout-container, .checkout-success {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
+.checkout-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 30px;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.form-section {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.form-section h3 {
+  font-size: 18px;
+  margin-bottom: 25px;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.address-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.address-inputs input {
+  height: 48px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0 15px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.address-inputs input:focus {
+  border-color: #8b3a2b;
+}
+
+.city-state {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pay-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pay-option:hover {
+  background: #fafafa;
+}
+
+.pay-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: #8b3a2b;
+}
+
+.pay-option span {
+  font-weight: 600;
+  color: #444;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #666;
+}
+
+.confirm-order-btn {
+  width: 100%;
+  height: 52px;
+  background: #388e3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 25px;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-transform: uppercase;
+}
+
+.confirm-order-btn:hover {
+  background: #2e7d32;
+}
+
+/* Success State */
+.checkout-success {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.success-lottie-wrap {
+  font-size: 100px;
+  margin-bottom: 30px;
+}
+
+.checkout-success h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+.checkout-success p {
+  font-size: 18px;
+  color: #666;
+  max-width: 500px;
+  margin: 0 auto 40px;
+}
+
+.home-btn {
+  display: inline-block;
+  padding: 15px 40px;
+  background: #8b3a2b;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+}

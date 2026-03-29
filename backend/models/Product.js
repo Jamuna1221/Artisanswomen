@@ -13,7 +13,12 @@ const productSchema = new mongoose.Schema(
 
     // Pricing & inventory
     price: { type: Number, required: true, min: 0 },
+    mrp: { type: Number, min: 0 }, // Discount calculation
     stock: { type: Number, default: 0, min: 0 },
+    
+    // Additional Info (Flipkart Style)
+    subcategory: { type: String, trim: true },
+    specifications: { type: Map, of: String },
 
     // Images — Cloudinary URLs
     images: [String],

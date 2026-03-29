@@ -207,7 +207,10 @@ export default function SignIn() {
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
         localStorage.setItem("token", res.data.token);
-        navigate("/home");
+        
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect") || "/home";
+        navigate(redirect);
       } else {
         setServerError("Unable to complete login. Please try again.");
       }

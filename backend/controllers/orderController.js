@@ -1,6 +1,47 @@
 const Order = require("../models/Order");
+const Product = require("../models/Product");
+const Cart = require("../models/Cart");
+
+/**
+ * POST /api/orders
+ */
+const createOrder = async (req, res) => {
+  try {
+    const { buyerId, items, totalAmount, shippingAddress, paymentMethod } = req.body;
+
+    // 1. Process Stock Reduction for each item
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (!product) throw new Error(`Product not found: ${item.productId}`);
+      if (product.stock < item.quantity) {
+        throw new Error(`Insufficient stock for ${product.title}`);
+      }
+      product.stock -= item.quantity;
+      await product.save();
+    }
+
+    // 2. Create Order
+    const order = await Order.create({
+      buyerId,
+      items,
+      totalAmount,
+      shippingAddress,
+      paymentMethod,
+      paymentStatus: "Completed", // Simulating payment
+      orderStatus: "Placing Order"
+    });
+
+    // 3. Clear Cart if it was a cart checkout
+    await Cart.findOneAndUpdate({ userId: buyerId }, { items: [] });
+
+    res.status(201).json({ message: "Order placed successfully", order });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 const getOrders = async (req, res) => {
+  // ... (existing logic)
   try {
     const { orderStatus, paymentStatus, page = 1, limit = 10 } = req.query;
     const filter = {};
@@ -45,4 +86,4 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { getOrders, getOrderById, updateOrderStatus };
+module.exports = { createOrder, getOrders, getOrderById, updateOrderStatus };

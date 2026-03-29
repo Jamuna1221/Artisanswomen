@@ -6,11 +6,18 @@ import "./FeaturedProducts.css";
 /** Must match Category.name in MongoDB (case-sensitive). Seed: npm run seed:categories */
 export const MARKETPLACE_CATEGORIES = [
   "All",
+  "For You",
   "Fashion",
   "Jewelry",
   "Handmade",
   "Home Decor",
   "Crafts",
+  "Textiles",
+  "Pottery",
+  "Paintings",
+  "Bags",
+  "Footwear",
+  "Wellness",
 ];
 
 export default function FeaturedProducts() {

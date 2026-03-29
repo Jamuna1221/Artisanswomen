@@ -97,14 +97,18 @@ const createProduct = async (req, res) => {
 
     let categoryObjId = undefined;
     if (category) {
+      let normCat = String(category);
+      if (normCat === "For You") normCat = "foryou";
+      else normCat = normCat.toLowerCase().replace(/\s+/g, "-");
+
       const mongoose = require("mongoose");
       if (mongoose.Types.ObjectId.isValid(category)) {
         categoryObjId = category;
       } else {
         const Category = require("../models/Category");
-        let cat = await Category.findOne({ name: new RegExp(`^${category}$`, "i") });
+        let cat = await Category.findOne({ name: new RegExp(`^${normCat}$`, "i") });
         if (!cat) {
-          cat = await Category.create({ name: category });
+          cat = await Category.create({ name: normCat });
         }
         categoryObjId = cat._id;
       }

@@ -1,0 +1,336 @@
+/* CategoryPage.css */
+
+.category-page-root {
+    min-height: 100vh;
+    background: #fcf6f3; /* Warm artisan white */
+    padding-top: 20px; /* Offset adjusted for sticky bars below */
+    font-family: 'Nunito', sans-serif;
+}
+
+.category-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #7d6b5e;
+}
+
+.breadcrumb a {
+    color: #a07850;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-sep {
+    color: #c4b5a6;
+}
+
+.breadcrumb-current {
+    color: #2d241c;
+    font-weight: 600;
+}
+
+/* Header */
+.category-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.category-title {
+    font-family: 'Playfair Display', serif; /* Or 'Cormorant Garamond' from App */
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #4a3728;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+
+.category-subtitle {
+    font-size: 1.1rem;
+    color: #7d6b5e;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Content Area */
+.category-content {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 3rem;
+}
+
+/* Sidebar */
+.category-sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.filter-group {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #f1ece6;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group h4 {
+    font-size: 1rem;
+    color: #2d241c;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #d4c4b0;
+    font-size: 0.9rem;
+    color: #4a3728;
+    outline: none;
+    background: #fdfaf7;
+}
+
+.rating-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.rating-pill {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e8ddd0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #4a3728;
+    transition: all 0.2s;
+}
+
+.rating-pill:hover, .rating-pill.active {
+    background: #8b3a2b;
+    color: white;
+    border-color: #8b3a2b;
+}
+
+/* Product Section */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2.5rem;
+}
+
+.product-item-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s;
+    border: 1px solid #f2ece6;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-item-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(74, 55, 40, 0.08);
+}
+
+.pd-img-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+}
+
+.pd-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pd-wish-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #8b3a2b;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pd-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pd-artisan {
+    font-size: 0.75rem;
+    font-weight: 750;
+    color: #a07850;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.pd-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d241c;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.pd-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    margin-top: auto;
+}
+
+.pd-price {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #8b3a2b;
+}
+
+.pd-rating {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #4a3728;
+}
+
+.pd-rating span {
+    color: #c9a96e;
+    margin-right: 2px;
+}
+
+.pd-add-btn {
+    width: 100%;
+    background: #4a3728;
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pd-add-btn:hover {
+    background: #8b3a2b;
+}
+
+/* Loader / Empty States */
+.category-loader, .no-res {
+    text-align: center;
+    padding: 6rem 2rem;
+}
+
+.spin-ring {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #f5ede3;
+    border-top: 3px solid #8b3a2b;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.no-res-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 2rem;
+}
+
+.no-res h3 {
+    font-size: 2rem;
+    color: #4a3728;
+    margin-bottom: 0.5rem;
+}
+
+.no-res p {
+    color: #7d6b5e;
+    margin-bottom: 2rem;
+}
+
+.no-res-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.back-btn {
+    background: #4a3728;
+    color: white;
+    border: none;
+    padding: 0.8rem 2.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s;
+}
+
+.back-btn:hover {
+    background: #8b3a2b;
+}
+
+.seller-direct-link {
+    font-size: 0.95rem;
+    color: #4a3728;
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    border: 1.5px dashed #a07850;
+    border-radius: 8px;
+    transition: all 0.25s;
+    text-decoration: none;
+}
+
+.seller-direct-link span {
+    color: #8b3a2b;
+    font-weight: 800;
+    text-decoration: underline;
+}
+
+.seller-direct-link:hover {
+    background: #fdfdf5;
+    border-color: #8b3a2b;
+    transform: scale(1.02);
+}
+
+@media (max-width: 1024px) {
+    .category-content { grid-template-columns: 1fr; }
+    .category-sidebar { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+}
+
+@media (max-width: 600px) {
+    .category-title { font-size: 2.5rem; }
+    .category-sidebar { grid-template-columns: 1fr; }
+}

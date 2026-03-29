@@ -10,6 +10,12 @@ import AppRoutes from './admin/routes/AppRoutes';
 import SellerRoutes from './seller/routes/SellerRoutes';
 import UserProtectedRoute from './user/ProtectedRoute';
 import AccountPage from './user/pages/Account/AccountPage';
+import UserProductsPage from './user/pages/Products/UserProductsPage';
+import ProductDetailPage from './user/pages/Products/ProductDetailPage';
+import CategoryPage from './user/pages/Category/CategoryPage';
+import CartPage from './user/pages/Cart/CartPage';
+import CheckoutPage from './user/pages/Cart/CheckoutPage';
+import { CartProvider } from "./user/context/CartContext";
 import { Navigate } from 'react-router-dom';
 import './admin/admin.css';
 
@@ -22,58 +28,53 @@ import ShippingPolicyPage from './user/pages/Help/ShippingPolicyPage';
 import PrivacyPolicyPage from './user/pages/Help/PrivacyPolicyPage';
 import TermsOfServicePage from './user/pages/Help/TermsOfServicePage';
 
-
-// This App component is the main entry point for both Admin and User-side (Home)
 function App() {
   return (
     <BrowserRouter>
-      {/* We nest both providers so both sections work */}
       <AuthProvider>
         <SellerAuthProvider>
-          <Routes>
-            {/* Admin routes (it uses absolute paths internally, so mounted at root wildcard) */}
-            {/* Buyer/Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Dashboard />} />
-            
-            {/* Auth Routes */}
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/login" element={<SignIn />} />
-            <Route path="/create" element={<SignIn />} />
-            <Route path="/register" element={<SignIn />} />
-            
-            {/* OTP & Verification */}
-            <Route path="/otp" element={<><EmailOtpVerification /><Footer /></>} />
-            <Route path="/verify-otp" element={<><EmailOtpVerification /><Footer /></>} />
-            
-            {/* Protected Account Routes */}
-            <Route path="/account/*" element={
-              <UserProtectedRoute>
-                <AccountPage />
-              </UserProtectedRoute>
-            } />
+          <CartProvider>
+            <Routes>
+              {/* Buyer/Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Dashboard />} />
+              <Route path="/products" element={<UserProductsPage />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="/category/:categoryName" element={<CategoryPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              
+              {/* Auth Routes */}
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/login" element={<SignIn />} />
+              <Route path="/create" element={<SignIn />} />
+              <Route path="/register" element={<SignIn />} />
+              
+              {/* OTP & Verification */}
+              <Route path="/otp" element={<><EmailOtpVerification /><Footer /></>} />
+              <Route path="/verify-otp" element={<><EmailOtpVerification /><Footer /></>} />
+              
+              {/* Protected Account Routes */}
+              <Route path="/account/*" element={
+                <UserProtectedRoute>
+                  <AccountPage />
+                </UserProtectedRoute>
+              } />
 
-            {/* Help Pages */}
-            <Route path="/faqs" element={<><FAQsPage /><Footer /></>} />
-            <Route path="/track-order" element={<><TrackOrderPage /><Footer /></>} />
-            <Route path="/returns" element={<><ReturnsPage /><Footer /></>} />
-            <Route path="/shipping-policy" element={<><ShippingPolicyPage /><Footer /></>} />
-            <Route path="/privacy-policy" element={<><PrivacyPolicyPage /><Footer /></>} />
-            <Route path="/terms" element={<><TermsOfServicePage /><Footer /></>} />
+              {/* Help Pages */}
+              <Route path="/faqs" element={<><FAQsPage /><Footer /></>} />
+              <Route path="/track-order" element={<><TrackOrderPage /><Footer /></>} />
+              <Route path="/returns" element={<><ReturnsPage /><Footer /></>} />
+              <Route path="/shipping-policy" element={<><ShippingPolicyPage /><Footer /></>} />
+              <Route path="/privacy-policy" element={<><PrivacyPolicyPage /><Footer /></>} />
+              <Route path="/terms" element={<><TermsOfServicePage /><Footer /></>} />
 
-            {/* Seller routes (mounted under /seller/*) */}
-            <Route path="/seller/*" element={<SellerRoutes />} />
-            {/* Admin routes (mounted last) */}
-            <Route path="/*" element={<AppRoutes />} />
-
-            {/* Buyer routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/otp" element={<EmailOtpVerification />} />
-            <Route path="/verify-otp" element={<EmailOtpVerification />} />
-            <Route path="/account" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-          </Routes>
+              {/* Seller routes */}
+              <Route path="/seller/*" element={<SellerRoutes />} />
+              {/* Admin routes */}
+              <Route path="/*" element={<AppRoutes />} />
+            </Routes>
+          </CartProvider>
         </SellerAuthProvider>
       </AuthProvider>
     </BrowserRouter>

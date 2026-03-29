@@ -1,14 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const { protectSeller } = require("../middleware/authMiddleware");
-const { uploadProductImages } = require("../config/cloudinary");
-const { listPublicProducts } = require("../controllers/marketplaceProductController");
-const { createProduct } = require("../controllers/sellerProductController");
+const { 
+  listPublicProducts, 
+  getProductsByCategoryName, 
+  getProductById, 
+  getRelatedProducts 
+} = require("../controllers/marketplaceProductController");
+const { getProductReviews, submitReview } = require("../controllers/reviewController");
+const { protect } = require("../middleware/authMiddleware");
 
-// Public: list products (optional ?category=ExactName)
+// Public: list products
 router.get("/", listPublicProducts);
 
-// Seller-only: create product (same handler as /api/seller/products)
-router.post("/", protectSeller, uploadProductImages, createProduct);
+// Single product details
+router.get("/:productId", getProductById);
+
+// Related products
+router.get("/:productId/related", getRelatedProducts);
+
+// Reviews
+router.get("/:productId/reviews", getProductReviews);
+router.post("/reviews", protect, submitReview);
+
+// List by category
+router.get("/category/:categoryName", getProductsByCategoryName);
 
 module.exports = router;
