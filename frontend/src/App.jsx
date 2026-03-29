@@ -63,9 +63,16 @@ function App() {
 
             {/* Seller routes (mounted under /seller/*) */}
             <Route path="/seller/*" element={<SellerRoutes />} />
-
             {/* Admin routes (mounted last) */}
             <Route path="/*" element={<AppRoutes />} />
+
+            {/* Buyer routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/otp" element={<EmailOtpVerification />} />
+            <Route path="/verify-otp" element={<EmailOtpVerification />} />
+            <Route path="/account" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </SellerAuthProvider>
       </AuthProvider>
