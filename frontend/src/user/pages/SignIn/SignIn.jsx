@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./SignIn.css";
 
@@ -104,6 +104,7 @@ const ArtisanIllustration = () => (
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mode, setMode] = useState("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -113,6 +114,16 @@ export default function SignIn() {
     email: "", password: "", firstName: "", lastName: "",
     gender: "", phone: "", city: "", state: "", age: "", bio: "",
   });
+
+  useEffect(() => {
+    // Determine mode based on current URL path
+    const path = location.pathname.toLowerCase();
+    if (path.includes("create") || path.includes("register")) {
+      setMode("signup");
+    } else if (path.includes("login") || path.includes("signin")) {
+      setMode("signin");
+    }
+  }, [location.pathname]);
 
   const isSignUp = mode === "signup";
 
@@ -163,8 +174,8 @@ export default function SignIn() {
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
         localStorage.setItem("token", res.data.token);
-        // Direct redirect upon signup completion to account dashboard
-        navigate("/account");
+        // Redirect to shop home page
+        navigate("/home");
       }
     } catch (error) {
       console.error("Signup error details:", error.response?.data || error.message);
@@ -196,7 +207,7 @@ export default function SignIn() {
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
         localStorage.setItem("token", res.data.token);
-        navigate("/account");
+        navigate("/home");
       } else {
         setServerError("Unable to complete login. Please try again.");
       }

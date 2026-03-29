@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './Hero.css'
+import { Link } from 'react-router-dom'
 
 const slides = [
   {
@@ -96,8 +97,8 @@ export default function Hero() {
           <p key={`sub-${active}`} className="hero__subtitle fade-text">{slide.subtitle}</p>
 
           <div className="hero__btns">
-            <a href="#" className="btn-primary">{slide.cta}</a>
-            <a href="#" className="btn-ghost">{slide.ctaSecondary}</a>
+            <Link to="/home" className="btn-primary">{slide.cta}</Link>
+            <Link to="/home" className="btn-ghost">{slide.ctaSecondary}</Link>
           </div>
         </div>
 

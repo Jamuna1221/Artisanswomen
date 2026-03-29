@@ -32,17 +32,21 @@ function App() {
         <SellerAuthProvider>
           <Routes>
             {/* Admin routes (it uses absolute paths internally, so mounted at root wildcard) */}
-            <Route path="/*" element={<AppRoutes />} />
-
-            {/* Seller routes (mounted under /seller/*) */}
-            <Route path="/seller/*" element={<SellerRoutes />} />
-
-            {/* Buyer/Public Routes with Footer */}
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/home" element={<><Dashboard /><Footer /></>} />
-            <Route path="/signin" element={<><SignIn /><Footer /></>} />
+            {/* Buyer/Public Routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Dashboard />} />
+            
+            {/* Auth Routes */}
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/create" element={<SignIn />} />
+            <Route path="/register" element={<SignIn />} />
+            
+            {/* OTP & Verification */}
             <Route path="/otp" element={<><EmailOtpVerification /><Footer /></>} />
             <Route path="/verify-otp" element={<><EmailOtpVerification /><Footer /></>} />
+            
+            {/* Protected Account Routes */}
             <Route path="/account/*" element={
               <UserProtectedRoute>
                 <AccountPage />
@@ -56,6 +60,12 @@ function App() {
             <Route path="/shipping-policy" element={<><ShippingPolicyPage /><Footer /></>} />
             <Route path="/privacy-policy" element={<><PrivacyPolicyPage /><Footer /></>} />
             <Route path="/terms" element={<><TermsOfServicePage /><Footer /></>} />
+
+            {/* Seller routes (mounted under /seller/*) */}
+            <Route path="/seller/*" element={<SellerRoutes />} />
+
+            {/* Admin routes (mounted last) */}
+            <Route path="/*" element={<AppRoutes />} />
           </Routes>
         </SellerAuthProvider>
       </AuthProvider>

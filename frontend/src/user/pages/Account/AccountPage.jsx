@@ -34,9 +34,13 @@ const AccountPage = () => {
     useEffect(() => {
         const stored = localStorage.getItem("user");
         if (stored) {
-            setUser(JSON.parse(stored));
+            try {
+                setUser(JSON.parse(stored));
+            } catch (err) {
+                navigate("/login");
+            }
         } else {
-            navigate("/signin");
+            navigate("/login");
         }
     }, [navigate]);
 

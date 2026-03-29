@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
+import Footer from "../../components/Footer/Footer";
 
 // ── Dummy Data ────────────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -125,22 +126,29 @@ function Header({ user, cartCount }) {
 
         {/* Right */}
         <div className="header__right">
-          <div className="header__user" onClick={() => setDropdown((d) => !d)}>
-            <div className="user-avatar">{user?.name?.[0]?.toUpperCase() || "U"}</div>
-            <div className="user-info">
-              <span className="user-greeting">Hello,</span>
-              <span className="user-name">{user?.name?.split(" ")[0] || "Guest"} ▾</span>
-            </div>
-            {dropdown && (
-              <div className="user-dropdown">
-                <Link to="/account/overview">My Account</Link>
-                <Link to="/account/orders">My Orders</Link>
-                <Link to="/account/wishlist">Wishlist</Link>
-                <hr />
-                <button onClick={handleLogout} className="logout-link" style={{background:'none', border:'none', cursor:'pointer', padding:'10px 15px', color:'#d32f2f', textAlign:'left'}}>Logout</button>
+          {user ? (
+            <div className="header__user" onClick={() => setDropdown((d) => !d)}>
+              <div className="user-avatar">{user?.name?.[0]?.toUpperCase() || "U"}</div>
+              <div className="user-info">
+                <span className="user-greeting">Hello,</span>
+                <span className="user-name">{user?.name?.split(" ")[0]} ▾</span>
               </div>
-            )}
-          </div>
+              {dropdown && (
+                <div className="user-dropdown">
+                  <Link to="/account/overview">My Account</Link>
+                  <Link to="/account/orders">My Orders</Link>
+                  <Link to="/account/wishlist">Wishlist</Link>
+                  <hr />
+                  <button onClick={handleLogout} className="logout-link" style={{background:'none', border:'none', cursor:'pointer', padding:'10px 15px', color:'#d32f2f', textAlign:'left'}}>Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="header__auth">
+               <Link to="/login" className="login-link">Login</Link>
+               <Link to="/create" className="register-btn">Create Account</Link>
+            </div>
+          )}
 
           <a href="/cart" className="header__cart">
             <span className="cart-icon">🛒</span>
@@ -317,9 +325,9 @@ export default function Home() {
     const stored = localStorage.getItem("user");
     if (stored) {
       try { setUser(JSON.parse(stored)); }
-      catch { setUser({ name: "Harini Manikandan" }); }
+      catch { setUser(null); }
     } else {
-      setUser({ name: "Harini Manikandan" }); // fallback for demo
+      setUser(null); 
     }
     // Google Fonts
     const link = document.createElement("link");
@@ -339,28 +347,7 @@ export default function Home() {
         <PersonalisedSection user={user} />
       </main>
 
-      <footer className="home-footer">
-        <div className="footer-inner">
-          <div className="footer-brand">
-            <span className="logo-icon">♡</span>
-            <span className="footer-brand-name">Handora</span>
-            <p>Empowering women artisans across India</p>
-          </div>
-          <div className="footer-links">
-            <h4>Shop</h4>
-            <a href="#">Fashion</a><a href="#">Jewelry</a><a href="#">Home Decor</a>
-          </div>
-          <div className="footer-links">
-            <h4>Help</h4>
-            <a href="#">Contact Us</a><a href="#">Track Order</a><a href="#">Returns</a>
-          </div>
-          <div className="footer-links">
-            <h4>Company</h4>
-            <a href="#">About</a><a href="#">Artisans</a><a href="#">Blog</a>
-          </div>
-        </div>
-        <div className="footer-bottom">© 2026 Handora. Made with ♥ for women artisans.</div>
-      </footer>
+      <Footer />
     </div>
   );
 }

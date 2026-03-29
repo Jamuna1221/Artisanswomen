@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'Paintings', href: '#' },
   { label: 'Jewellery', href: '#' },
   { label: 'GI Tagged', href: '#' },
+  { label: 'Shop Now', href: '/home' },
   { label: 'Our Artisans', href: '#' },
 ]
 
@@ -63,9 +64,9 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <nav className="navbar__links">
             {navLinks.map(link => (
-              <a key={link.label} href={link.href} className="navbar__link">
+              <Link key={link.label} to={link.href} className="navbar__link">
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -100,7 +101,7 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link to="/signin" className="nav-cta">Sign In</Link>
+              <Link to="/login" className="nav-cta">Sign In</Link>
             )}
           </div>
 
@@ -118,11 +119,11 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div className={`mobile-menu ${menuOpen ? 'mobile-menu--open' : ''}`}>
         {navLinks.map(link => (
-          <a key={link.label} href={link.href} className="mobile-menu__link" onClick={() => setMenuOpen(false)}>
+          <Link key={link.label} to={link.href} className="mobile-menu__link" onClick={() => setMenuOpen(false)}>
             {link.label}
-          </a>
+          </Link>
         ))}
-        <Link to="/signin" className="mobile-menu__cta" onClick={() => setMenuOpen(false)}>Sign In</Link>
+        <Link to="/login" className="mobile-menu__cta" onClick={() => setMenuOpen(false)}>Sign In</Link>
       </div>
     </>
   )
