@@ -41,7 +41,9 @@ const buyerSchema = new mongoose.Schema(
     },
     bio: {
       type: String
-    }
+    },
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   },
   {
     timestamps: true

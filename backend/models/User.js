@@ -77,6 +77,10 @@ const userSchema = new mongoose.Schema(
     otp: { type: String },
     otpExpiry: { type: Date },
     isOtpVerified: { type: Boolean, default: false },
+
+    /** Optional denormalized refs; canonical wishlist/orders also live in their collections */
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   },
   { timestamps: true }
 );

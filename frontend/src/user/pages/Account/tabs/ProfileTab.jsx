@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { updateUserProfile } from "../../../services/userApi";
 
 const ProfileTab = ({ user, setUser }) => {
     const [form, setForm] = useState({
@@ -39,16 +39,14 @@ const ProfileTab = ({ user, setUser }) => {
         setLoading(true);
         setMessage(null);
         try {
-            const token = localStorage.getItem("token");
-            const res = await axios.put("http://localhost:5000/api/account/me", form, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.data.success) {
-                localStorage.setItem("user", JSON.stringify(res.data.user));
-                setUser(res.data.user);
+            const res = await updateUserProfile(form);
+            if (res.user) {
+                localStorage.setItem("user", JSON.stringify(res.user));
+                setUser(res.user);
                 setMessage({ type: "success", text: "Profile updated successfully!" });
             }
         } catch (err) {
+            console.error(err.response?.data);
             setMessage({ type: "error", text: err.response?.data?.message || "Failed to update profile" });
         } finally {
             setLoading(false);

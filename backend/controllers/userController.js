@@ -1,148 +1,98 @@
-const User = require("../models/User");
-const ArtisanProfile = require("../models/ArtisanProfile");
-const { sendApprovalEmail, sendRejectionEmail } = require("../utils/sendEmail");
-const { createSellerNotification } = require("../utils/notificationHelper");
+const Order = require("../models/Order");
+const Address = require("../models/Address");
+const Wishlist = require("../models/Wishlist");
+const { findAccountById, orderScopeFilter } = require("../utils/accountLookup");
+const { applyProfileFields } = require("../utils/profileUpdate");
 
-const getArtisans = async (req, res) => {
+/**
+ * GET /api/users/profile
+ */
+const getUserProfile = async (req, res) => {
   try {
-    const { status, verificationStatus, search, page = 1, limit = 10 } = req.query;
-    const filter = { role: "seller" };
-    if (status) filter.status = status;
-    if (verificationStatus) filter.verificationStatus = verificationStatus;
-    if (search) filter.$or = [{ name: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }];
-
-    const total = await User.countDocuments(filter);
-    const artisans = await User.find(filter)
-      .select("-password -profileImage.data -idProofFile.data -artisanCardFile.data -businessProofFile.data -addressProofFile.data -productImages.data")
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
-
-    const artisanIds = artisans.map((a) => a._id);
-    const profiles = await ArtisanProfile.find({ userId: { $in: artisanIds } });
-    const profileMap = {};
-    profiles.forEach((p) => (profileMap[p.userId.toString()] = p));
-
-    const data = artisans.map((a) => ({
-      ...a.toObject(),
-      profile: profileMap[a._id.toString()] || null,
-    }));
-
-    res.json({ artisans: data, total, page: parseInt(page), pages: Math.ceil(total / limit) });
+    if (!req.user?._id) {
+      return res.status(403).json({ message: "Buyer or seller token required" });
+    }
+    const user = await findAccountById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const safe = user.toObject ? user.toObject() : { ...user };
+    delete safe.password;
+    delete safe.otp;
+    delete safe.otpExpiry;
+    delete safe.otpExpires;
+    res.status(200).json({ user: safe });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("getUserProfile:", err);
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
 
-const getBuyers = async (req, res) => {
+/**
+ * GET /api/users/dashboard
+ */
+const getUserDashboard = async (req, res) => {
   try {
-    const { status, search, page = 1, limit = 10 } = req.query;
-    const filter = { role: "buyer" };
-    if (status) filter.status = status;
-    if (search) filter.$or = [{ name: { $regex: search, $options: "i" } }, { email: { $regex: search, $options: "i" } }];
+    if (!req.user?._id) {
+      return res.status(403).json({ message: "Buyer or seller token required" });
+    }
+    const uid = req.user._id;
+    const orderFilter = orderScopeFilter(uid);
 
-    const total = await User.countDocuments(filter);
-    const buyers = await User.find(filter)
-      .select("-password")
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+    const totalOrders = await Order.countDocuments(orderFilter);
+    const wishlistCount = await Wishlist.countDocuments({ userId: uid });
+    const savedAddresses = await Address.countDocuments({ userId: uid });
 
-    res.json({ buyers, total, page: parseInt(page), pages: Math.ceil(total / limit) });
+    const inTransitOrders = await Order.countDocuments({
+      ...orderFilter,
+      orderStatus: { $in: ["Shipped", "Confirmed", "Processing"] },
+    });
+
+    const lastOrder = await Order.findOne(orderFilter).sort({ createdAt: -1 }).lean();
+
+    res.status(200).json({
+      totalOrders,
+      wishlistCount,
+      inTransitOrders,
+      savedAddresses,
+      lastOrder: lastOrder || null,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("getUserDashboard:", err);
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
 
-const updateUserStatus = async (req, res) => {
+/**
+ * PUT /api/users/profile
+ * Body: firstName, lastName, phone, gender, bio, city, state (same as account/me)
+ */
+const updateUserProfile = async (req, res) => {
   try {
-    const { status } = req.body;
-    const user = await User.findByIdAndUpdate(req.params.id, { status }, { new: true }).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ message: `User status updated to ${status}`, user });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const getUserById = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    const profile = await ArtisanProfile.findOne({ userId: req.params.id });
-    res.json({ user, profile });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const approveSeller = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    user.verificationStatus = "Approved";
-    user.isVerified = true;
-    user.approvedAt = new Date();
-    user.status = "active"; // Ensure active status
-
-    // Send email
-    try {
-      await sendApprovalEmail(user.email, user.name);
-      user.approvalEmailSent = true;
-    } catch (emailErr) {
-      console.error("Failed to send approval email:", emailErr);
-      user.approvalEmailSent = false;
+    if (!req.user?._id) {
+      return res.status(403).json({ message: "Buyer or seller token required" });
+    }
+    const doc = await findAccountById(req.user._id);
+    if (!doc) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    await user.save();
+    applyProfileFields(doc, req.body);
 
-    // Sync profile if exists
-    await ArtisanProfile.findOneAndUpdate(
-      { userId: user._id },
-      { verificationStatus: "Verified", isVerified: true }
-    );
-
-    await createSellerNotification(user._id, "Application Approved", "Congratulations! Your artisan account has been approved. You now have full access to your Seller Dashboard.", "approval", "important");
-
-    res.json({ message: "Seller approved successfully", user });
+    await doc.save();
+    const safe = doc.toObject();
+    delete safe.password;
+    delete safe.otp;
+    delete safe.otpExpiry;
+    res.status(200).json({ user: safe });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("updateUserProfile:", err);
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
 
-const rejectSeller = async (req, res) => {
-  try {
-    const { reason } = req.body;
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    user.verificationStatus = "Rejected";
-    user.isVerified = false;
-    user.rejectionReason = reason || "Does not meet our criteria for a seller account.";
-    user.rejectedAt = new Date();
-
-    // Send email
-    try {
-      await sendRejectionEmail(user.email, user.name, user.rejectionReason);
-    } catch (emailErr) {
-      console.error("Failed to send rejection email:", emailErr);
-    }
-
-    await user.save();
-
-    // Sync profile if exists
-    await ArtisanProfile.findOneAndUpdate(
-      { userId: user._id },
-      { verificationStatus: "Rejected", isVerified: false }
-    );
-
-    await createSellerNotification(user._id, "Application Rejected", user.rejectionReason, "rejection", "important");
-
-    res.json({ message: "Seller rejected successfully", user });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+module.exports = {
+  getUserProfile,
+  getUserDashboard,
+  updateUserProfile,
 };
-
-module.exports = { getArtisans, getBuyers, updateUserStatus, getUserById, approveSeller, rejectSeller };

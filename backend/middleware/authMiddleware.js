@@ -41,11 +41,15 @@ const protect = async (req, res, next) => {
     }
 
     req.user = user;
+    req.userId = user._id;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Token is invalid or expired" });
   }
 };
+
+/** Alias for JWT-protected buyer/seller routes (same behavior as `protect`) */
+const verifyToken = protect;
 
 /**
  * Middleware: allow only approved sellers to access seller-dashboard APIs
@@ -87,10 +91,11 @@ const protectSeller = async (req, res, next) => {
     }
 
     req.user = user;
+    req.userId = user._id;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Token is invalid or expired" });
   }
 };
 
-module.exports = { protect, protectSeller };
+module.exports = { protect, protectSeller, verifyToken };

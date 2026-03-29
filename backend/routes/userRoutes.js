@@ -1,23 +1,14 @@
 const express = require("express");
-const {
-  getArtisans,
-  getBuyers,
-  updateUserStatus,
-  getUserById,
-  approveSeller,
-  rejectSeller,
-} = require("../controllers/userController");
-const { protect } = require("../middleware/authMiddleware");
-
 const router = express.Router();
+const { verifyToken } = require("../middleware/authMiddleware");
+const {
+  getUserProfile,
+  getUserDashboard,
+  updateUserProfile,
+} = require("../controllers/userController");
 
-router.get("/artisans", protect, getArtisans);
-router.get("/buyers", protect, getBuyers);
-router.get("/:id", protect, getUserById);
-router.put("/:id/status", protect, updateUserStatus);
-
-// Approval System
-router.patch("/artisans/:id/approve", protect, approveSeller);
-router.patch("/artisans/:id/reject", protect, rejectSeller);
+router.get("/profile", verifyToken, getUserProfile);
+router.get("/dashboard", verifyToken, getUserDashboard);
+router.put("/profile", verifyToken, updateUserProfile);
 
 module.exports = router;

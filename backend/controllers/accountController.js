@@ -5,15 +5,21 @@ const Wishlist = require("../models/Wishlist");
 const Cart = require("../models/Cart");
 const Complaint = require("../models/Complaint");
 const bcrypt = require("bcryptjs");
+const { findAccountById, orderScopeFilter } = require("../utils/accountLookup");
+const { applyProfileFields } = require("../utils/profileUpdate");
 
 // @desc    Get current user profile
 // @route   GET /api/account/me
 // @access  Private
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await findAccountById(req.user._id);
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ success: true, user });
+    const safe = user.toObject ? user.toObject() : { ...user };
+    delete safe.password;
+    delete safe.otp;
+    delete safe.otpExpiry;
+    res.json({ success: true, user: safe });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -24,24 +30,16 @@ const getProfile = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
   try {
-    const { firstName, lastName, phone, gender, bio, city, state } = req.body;
-    const user = await User.findById(req.user._id);
+    const doc = await findAccountById(req.user._id);
+    if (!doc) return res.status(404).json({ message: "User not found" });
 
-    if (user) {
-      user.firstName = firstName || user.firstName;
-      user.lastName = lastName || user.lastName;
-      user.name = `${user.firstName} ${user.lastName}`.trim();
-      user.phone = phone || user.phone;
-      user.gender = gender || user.gender;
-      user.bio = bio || user.bio;
-      user.city = city || user.city;
-      user.state = state || user.state;
-
-      const updatedUser = await user.save();
-      res.json({ success: true, user: updatedUser });
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
+    applyProfileFields(doc, req.body);
+    const updatedUser = await doc.save();
+    const safe = updatedUser.toObject();
+    delete safe.password;
+    delete safe.otp;
+    delete safe.otpExpiry;
+    res.json({ success: true, user: safe });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -53,9 +51,9 @@ const updateProfile = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user._id);
+    const user = await findAccountById(req.user._id);
 
-    if (user && (await bcrypt.compare(currentPassword, user.password))) {
+    if (user && user.password && (await bcrypt.compare(currentPassword, user.password))) {
       user.password = await bcrypt.hash(newPassword, 10);
       await user.save();
       res.json({ success: true, message: "Password updated successfully" });
@@ -100,7 +98,7 @@ const addAddress = async (req, res) => {
 
 const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ buyerId: req.user._id }).sort("-createdAt");
+    const orders = await Order.find(orderScopeFilter(req.user._id)).sort("-createdAt");
     res.json({ success: true, orders });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -137,22 +135,30 @@ const submitComplaint = async (req, res) => {
 // --- DASHBOARD STATS ---
 const getDashboardStats = async (req, res) => {
   try {
-    const totalOrders = await Order.countDocuments({ buyerId: req.user._id });
-    const pendingOrders = await Order.countDocuments({ buyerId: req.user._id, orderStatus: { $ne: "Delivered" } });
-    const wishlistCount = await Wishlist.countDocuments({ userId: req.user._id });
-    const addressCount = await Address.countDocuments({ userId: req.user._id });
-    
-    const lastOrder = await Order.findOne({ buyerId: req.user._id }).sort("-createdAt");
+    const uid = req.user._id;
+    const orderFilter = orderScopeFilter(uid);
+
+    const totalOrders = await Order.countDocuments(orderFilter);
+    const inTransitOrders = await Order.countDocuments({
+      ...orderFilter,
+      orderStatus: { $in: ["Shipped", "Confirmed", "Processing"] },
+    });
+    const wishlistCount = await Wishlist.countDocuments({ userId: uid });
+    const addressCount = await Address.countDocuments({ userId: uid });
+
+    const lastOrder = await Order.findOne(orderFilter).sort("-createdAt");
 
     res.json({
       success: true,
       stats: {
         totalOrders,
-        pendingOrders,
+        pendingOrders: inTransitOrders,
+        inTransitOrders,
         wishlistCount,
         addressCount,
-        lastOrder
-      }
+        savedAddresses: addressCount,
+        lastOrder,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

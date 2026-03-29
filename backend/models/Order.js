@@ -10,7 +10,11 @@ const orderItemSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema(
   {
-    buyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    /** @deprecated use userId — kept for backward compatibility */
+    buyerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
+    /** Preferred owner reference (same id as buyer for marketplace orders) */
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
+    /** Line items (API alias: `products`) */
     items: [orderItemSchema],
     totalAmount: { type: Number, required: true },
     paymentStatus: {
@@ -22,6 +26,12 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ["Processing", "Confirmed", "Shipped", "Delivered", "Cancelled", "Returned"],
       default: "Processing",
+    },
+    /** Simplified status for basic integrations: pending | shipped | delivered */
+    status: {
+      type: String,
+      enum: ["pending", "shipped", "delivered"],
+      default: "pending",
     },
     shippingAddress: {
       fullName: String,
@@ -36,5 +46,32 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+orderSchema.virtual("products").get(function () {
+  return this.items;
+});
+
+orderSchema.pre("validate", function (next) {
+  if (!this.buyerId && !this.userId) {
+    return next(new Error("Order requires buyerId or userId"));
+  }
+  if (!this.userId && this.buyerId) this.userId = this.buyerId;
+  if (!this.buyerId && this.userId) this.buyerId = this.userId;
+  next();
+});
+
+orderSchema.pre("save", function () {
+  const os = this.orderStatus;
+  if (os === "Delivered") {
+    this.status = "delivered";
+  } else if (os === "Shipped") {
+    this.status = "shipped";
+  } else {
+    this.status = "pending";
+  }
+});
+
+orderSchema.set("toJSON", { virtuals: true });
+orderSchema.set("toObject", { virtuals: true });
 
 module.exports = mongoose.model("Order", orderSchema);
